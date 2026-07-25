@@ -8,8 +8,8 @@ description: >-
   workday.lightning.force.com Appointment URL, asks to create/draft/summarize a
   Knowledge Article from a case, or says "make a KA" — even on the first
   message. "Create a KA" means local draft only; Salesforce writes require a
-  follow-up approval. When ka-creator-tools is available, use its approval-gate
-  and salesforce-write helpers.
+  follow-up approval. Use the bundled approval-gate and salesforce-write helpers
+  in this skill folder.
 ---
 
 # WSP Case → Knowledge Article
@@ -65,8 +65,6 @@ Default template: **Knowledge Articles** (Description + Resolution, no separate 
 - **Decide** whether Resolution items are sequential steps or parallel strategies based on the case — do not default to numbered steps
 - **Structure for scanability:** `###` headings + bullet lists in Resolution; avoid dense paragraphs (see drafting.md readability section)
 
-When `~/Handson/ka-creator-tools/` is available:
-
 ```js
 const { registerDraft } = require('./approval-gate');
 registerDraft('REQ-######', { draftPath: 'draft-REQ-######.md', sourceUrl, title });
@@ -108,5 +106,5 @@ Remind the user it is a **draft** (not published). Do not click Publish.
 
 | Need | Where |
 |------|-------|
-| Review gate, category resolver, rich-text helpers | `~/Handson/ka-creator-tools/` — see its `AGENTS.md` |
+| Review gate, category resolver, rich-text helpers | `approval-gate.js`, `salesforce-write.js`, `category-resolver.js` — see [AGENTS.md](AGENTS.md) |
 | Lightning navigation gotchas | [references/lightning-tips.md](references/lightning-tips.md) |

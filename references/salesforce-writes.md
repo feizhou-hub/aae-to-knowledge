@@ -1,6 +1,6 @@
 # Salesforce Writes (Step 5)
 
-**Only after user approval** in a follow-up message. Use `~/Handson/ka-creator-tools/salesforce-write.js`.
+**Only after user approval** in a follow-up message. Use `salesforce-write.js` in this skill folder.
 
 ```js
 const { markApproved, markCreated } = require('./approval-gate');
@@ -86,8 +86,6 @@ Use proper structure so Salesforce renders borders:
 ```
 
 ## Related Categories
-
-Use ka-creator-tools when available:
 
 ```js
 const { resolveCategories } = require('./category-resolver');

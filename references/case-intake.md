@@ -61,8 +61,6 @@ Use global Salesforce search with core technical terms (integration name, error 
 
 **Do not** `browser_navigate` to `/lightning/globalSearch/<term>` — that path does not exist in Lightning and triggers a **"Page doesn't exist"** modal. Search via the Lightning search box instead.
 
-When `ka-creator-tools` is available:
-
 ```js
 const { getMcpKnowledgeSearchScript } = require('./salesforce-search');
 

@@ -1,1 +1,4 @@
 .DS_Store
+.ka-workflow/
+.playwright-mcp/
+draft-REQ-*.md

@@ -116,7 +116,7 @@ Save as `draft-REQ-######.md` in the project directory (not chat-only). Include:
 - Proposed Related Categories
 - Duplicate check summary
 
-Then register with ka-creator-tools:
+Then register the draft:
 
 ```js
 const { registerDraft } = require('./approval-gate');
