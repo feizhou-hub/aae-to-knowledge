@@ -12,17 +12,72 @@ Agent skill for turning Workday WSP Salesforce appointments (Ask an Expert, `REQ
 
 ## Install
 
-### Claude Code
+### 1. Clone this skill
+
+#### Claude Code
 
 ```bash
 git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.claude/skills/aae-to-knowledge
 ```
 
-### Cursor
+#### Cursor
 
 ```bash
 git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.cursor/skills/aae-to-knowledge
 ```
+
+### 2. Install Playwright MCP
+
+This skill drives Salesforce through the browser via [Playwright MCP](https://github.com/microsoft/playwright-mcp). You need Node.js **18+** and an MCP client (Cursor, Claude Code, etc.).
+
+#### Cursor
+
+**Option A — Settings UI**
+
+1. Open **Cursor Settings** → **MCP** → **Add new MCP Server**
+2. Type: `command`
+3. Command: `npx @playwright/mcp@latest`
+4. Save and confirm the server shows as connected (green)
+
+**Option B — `~/.cursor/mcp.json`**
+
+Create or edit `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    }
+  }
+}
+```
+
+Restart Cursor or reload MCP servers after saving.
+
+On first run, `npx` downloads `@playwright/mcp` and Playwright browser binaries automatically.
+
+#### Claude Code
+
+```bash
+claude mcp add playwright npx @playwright/mcp@latest
+```
+
+#### Verify
+
+In your agent chat, Playwright MCP tools should be available — for example `browser_navigate`, `browser_snapshot`, and `browser_run_code_unsafe`. The server name is usually `playwright` or `user-playwright`.
+
+#### Log into Salesforce
+
+The first time you run the workflow, the agent opens a browser window. Log into Workday Salesforce manually if prompted (SSO/MFA). The session persists in Playwright's default profile for later runs.
+
+> **Note:** Use **Playwright MCP**, not Cursor's built-in browser MCP. This skill relies on `browser_run_code_unsafe` and other Playwright-specific tools.
+
+See [Headless mode](#headless-mode) to hide the browser window, and [Playwright MCP configuration](https://playwright.dev/mcp/configuration/options) for all options.
 
 ## Structure
 
@@ -63,7 +118,7 @@ The skill is mostly markdown instructions for the agent, but a few small Node mo
 
 ## Prerequisites
 
-- Playwright MCP (`browser_navigate`, `browser_snapshot`, `browser_click`, `browser_run_code_unsafe`)
+- [Playwright MCP](#2-install-playwright-mcp) installed and connected
 - Logged into Workday Salesforce in the driven browser
 
 ## Headless mode
