@@ -24,28 +24,42 @@ git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.claude/skills/a
 git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.cursor/skills/aae-to-knowledge
 ```
 
-Or clone into a project's `.cursor/skills/` directory to share with your team.
-
 ## Structure
 
 ```
 aae-to-knowledge/
 ├── SKILL.md                    # Main workflow
 ├── AGENTS.md                   # Review gate API reference
-├── approval-gate.js            # Draft lifecycle — blocks Salesforce writes until approved
-├── salesforce-write.js         # Guarded Playwright write helpers
-├── salesforce-search.js        # Safe Knowledge duplicate-check search
-├── category-resolver.js        # Maps appointment fields → Related Categories
-├── product-category-matrix.json
-├── fill-related-categories.js  # Playwright: auto-fill Related Categories
-├── set-rich-text-fields.js     # Playwright: set TinyMCE fields by label
-├── extract-matrix.js           # Refresh category matrix from Salesforce
+├── lib/                        # Node helpers (review gate + Playwright scripts)
+│   ├── index.js                # Single entry point — require('./lib')
+│   ├── approval-gate.js        # Blocks Salesforce writes until user approves
+│   ├── salesforce-write.js     # Guarded write script generators
+│   ├── salesforce-search.js    # Safe Knowledge duplicate-check search
+│   ├── category-resolver.js    # Maps request fields → Related Categories
+│   ├── product-category-matrix.json
+│   ├── fill-related-categories.js
+│   ├── set-rich-text-fields.js
+│   └── extract-matrix.js       # Optional: refresh category matrix from Salesforce
 └── references/
     ├── request-intake.md
     ├── drafting.md
     ├── lightning-tips.md
     └── salesforce-writes.md
 ```
+
+## Why the `lib/` folder?
+
+The skill is mostly markdown instructions for the agent, but a few small Node modules add real guardrails:
+
+| Module | Purpose |
+|--------|---------|
+| `approval-gate.js` | **Required** — filesystem state that throws if an agent tries to write to Salesforce before human approval |
+| `salesforce-write.js` | **Required** — wraps write scripts behind the review gate |
+| `salesforce-search.js` | Duplicate-check Playwright script (avoids invalid `/lightning/globalSearch/` URLs) |
+| `category-resolver.js` | Maps appointment Product Area/Capability to Knowledge categories |
+| `set-rich-text-fields.js` | TinyMCE HTML fill by label (not editor index) |
+| `fill-related-categories.js` | Related Categories Playwright script |
+| `extract-matrix.js` | Optional maintenance — refresh `product-category-matrix.json` |
 
 ## Prerequisites
 
@@ -57,9 +71,15 @@ aae-to-knowledge/
 Run helpers from the cloned skill directory:
 
 ```javascript
-const { registerDraft, markApproved } = require('./approval-gate');
-const { getMcpSetRichTextScript, getMcpFillScript } = require('./salesforce-write');
-const { getMcpKnowledgeSearchScript } = require('./salesforce-search');
+const {
+  registerDraft,
+  markApproved,
+  getMcpSetRichTextScript,
+  getMcpFillScript,
+  getMcpKnowledgeSearchScript,
+  resolveCategories,
+  productCategoryMatrix,
+} = require('./lib');
 ```
 
 See [AGENTS.md](AGENTS.md) for the review gate API and [SKILL.md](SKILL.md) for the full workflow.

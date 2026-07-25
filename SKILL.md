@@ -66,7 +66,7 @@ Default template: **Knowledge Articles** (Description + Resolution, no separate 
 - **Structure for scanability:** `###` headings + bullet lists in Resolution; avoid dense paragraphs (see drafting.md readability section)
 
 ```js
-const { registerDraft } = require('./approval-gate');
+const { registerDraft } = require('./lib');
 registerDraft('REQ-######', { draftPath: 'draft-REQ-######.md', sourceUrl, title });
 ```
 
@@ -82,15 +82,14 @@ registerDraft('REQ-######', { draftPath: 'draft-REQ-######.md', sourceUrl, title
 ### Step 5 — Salesforce draft (after approval only)
 
 ```js
-const { markApproved, markCreated } = require('./approval-gate');
-const { getMcpSetRichTextScript, getMcpFillScript } = require('./salesforce-write');
+const { markApproved, markCreated, getMcpSetRichTextScript, getMcpFillScript } = require('./lib');
 
 markApproved('REQ-######');
 // ... create article via Playwright ...
 markCreated('REQ-######', { articleUrl });
 ```
 
-Use `salesforce-write.js` (not `set-rich-text-fields.js` / `fill-related-categories.js` directly) — it enforces the review gate.
+Use `salesforce-write.js` (via `require('./lib')`, not the underlying modules directly) — it enforces the review gate.
 
 → Form fill, TinyMCE, categories, tables: [references/salesforce-writes.md](references/salesforce-writes.md)
 
@@ -106,5 +105,5 @@ Remind the user it is a **draft** (not published). Do not click Publish.
 
 | Need | Where |
 |------|-------|
-| Review gate, category resolver, rich-text helpers | `approval-gate.js`, `salesforce-write.js`, `category-resolver.js` — see [AGENTS.md](AGENTS.md) |
+| Review gate, category resolver, rich-text helpers | `lib/` — see [AGENTS.md](AGENTS.md) |
 | Lightning navigation gotchas | [references/lightning-tips.md](references/lightning-tips.md) |

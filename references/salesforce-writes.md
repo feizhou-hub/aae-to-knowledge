@@ -1,10 +1,9 @@
 # Salesforce Writes (Step 5)
 
-**Only after user approval** in a follow-up message. Use `salesforce-write.js` in this skill folder.
+**Only after user approval** in a follow-up message. Use `lib/salesforce-write.js` via `require('./lib')`.
 
 ```js
-const { markApproved, markCreated } = require('./approval-gate');
-const { getMcpSetRichTextScript, getMcpFillScript } = require('./salesforce-write');
+const { markApproved, markCreated, getMcpSetRichTextScript, getMcpFillScript, resolveCategories, productCategoryMatrix } = require('./lib');
 
 markApproved('REQ-######');
 ```
@@ -88,8 +87,8 @@ Use proper structure so Salesforce renders borders:
 ## Related Categories
 
 ```js
-const { resolveCategories } = require('./category-resolver');
-const matrix = require('./product-category-matrix.json');
+const { resolveCategories, productCategoryMatrix } = require('./lib');
+const matrix = productCategoryMatrix;
 
 globalThis.__kaCategories = resolveCategories(productArea, capability, matrix);
 globalThis.__kaArticleUrl = '<saved article url>';

@@ -119,7 +119,7 @@ Save as `draft-REQ-######.md` in the project directory (not chat-only). Include:
 Then register the draft:
 
 ```js
-const { registerDraft } = require('./approval-gate');
+const { registerDraft } = require('./lib');
 registerDraft('REQ-######', {
   draftPath: 'draft-REQ-######.md',
   sourceUrl: '<appointment url>',

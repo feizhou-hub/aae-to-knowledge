@@ -1,4 +1,4 @@
-# KA Creator Tools — Agent Instructions
+# Agent API — `lib/`
 
 ## Review gate (highest priority after duplicate check)
 
@@ -16,8 +16,16 @@
 ## API
 
 ```javascript
-const { registerDraft, markApproved, markCreated, assertApproved } = require('./approval-gate');
-const { getMcpFillScript, getMcpSetRichTextScript } = require('./salesforce-write');
+const {
+  registerDraft,
+  markApproved,
+  markCreated,
+  getMcpSetRichTextScript,
+  getMcpFillScript,
+  getMcpKnowledgeSearchScript,
+  resolveCategories,
+  productCategoryMatrix,
+} = require('./lib');
 
 // After saving draft markdown:
 registerDraft('REQ-439659', {
@@ -41,7 +49,7 @@ See [SKILL.md](SKILL.md) for the full workflow. Step 4 stops for review; Step 5 
 **Never** `browser_navigate` to `/lightning/globalSearch/...` — that URL does not exist and shows **"Page doesn't exist"**.
 
 ```javascript
-const { getMcpKnowledgeSearchScript } = require('./salesforce-search');
+const { getMcpKnowledgeSearchScript } = require('./lib');
 
 globalThis.__kaSearchQuery = 'Put Reference ID EIB load time';
 // Pass getMcpKnowledgeSearchScript() to browser_run_code_unsafe

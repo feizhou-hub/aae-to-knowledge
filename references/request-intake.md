@@ -62,7 +62,7 @@ Use global Salesforce search with core technical terms (integration name, error 
 **Do not** `browser_navigate` to `/lightning/globalSearch/<term>` — that path does not exist in Lightning and triggers a **"Page doesn't exist"** modal. Search via the Lightning search box instead.
 
 ```js
-const { getMcpKnowledgeSearchScript } = require('./salesforce-search');
+const { getMcpKnowledgeSearchScript } = require('./lib');
 
 globalThis.__kaSearchQuery = 'Put Reference ID EIB load time';
 // Pass getMcpKnowledgeSearchScript() to browser_run_code_unsafe
