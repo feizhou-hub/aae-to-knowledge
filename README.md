@@ -152,6 +152,60 @@ Or set the environment variable:
 
 Restart Cursor (or reload MCP servers) after changing this.
 
+### Claude Code
+
+**Option A — CLI** (recommended)
+
+If Playwright MCP is already installed, remove it first, then re-add with `--headless`:
+
+```bash
+claude mcp remove playwright -s user
+claude mcp add -s user playwright -- npx -y @playwright/mcp@latest --headless
+```
+
+Use `-s user` for all projects, or `-s local` for the current project only.
+
+Or pass the flag via environment variable:
+
+```bash
+claude mcp add -s user -e PLAYWRIGHT_MCP_HEADLESS=true playwright -- npx -y @playwright/mcp@latest
+```
+
+**Option B — `.mcp.json`** (project scope)
+
+Create or edit `.mcp.json` in your project root:
+
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--headless"
+      ]
+    }
+  }
+}
+```
+
+Claude Code may prompt you to approve project-scoped servers on first use.
+
+**Option C — `add-json`**
+
+```bash
+claude mcp add-json -s user playwright '{"command":"npx","args":["-y","@playwright/mcp@latest","--headless"]}'
+```
+
+**Verify**
+
+```bash
+claude mcp get playwright
+```
+
+You should see `--headless` in the Args list (or `PLAYWRIGHT_MCP_HEADLESS` in Environment).
+
 ### Salesforce login in headless mode
 
 Headless mode has no visible window for SSO or MFA. Use one of:
@@ -168,12 +222,18 @@ Headless mode has no visible window for SSO or MFA. Use one of:
   ]
   ```
 
+  For Claude Code with the CLI:
+
+  ```bash
+  claude mcp add -s user playwright -- npx -y @playwright/mcp@latest --headless --user-data-dir ~/.playwright-mcp/salesforce-profile
+  ```
+
 - **`--storage-state`** — path to a saved auth state file (`PLAYWRIGHT_MCP_STORAGE_STATE`)
 - **Playwright browser extension** — connect to an existing logged-in Chrome/Edge tab (`--extension`)
 
 ### Notes
 
-- Use **Playwright MCP** (`user-playwright`), not Cursor's built-in browser MCP — the IDE browser always opens a visible tab.
+- In **Cursor**, use **Playwright MCP** (`user-playwright`), not Cursor's built-in browser MCP — the IDE browser always opens a visible tab.
 - Headless only hides the browser UI. The review gate still applies: Steps 1–4 run as usual, and Step 5 waits for explicit approval before any Salesforce write.
 - Screenshots and snapshots still work headless; you just won't see live navigation.
 
