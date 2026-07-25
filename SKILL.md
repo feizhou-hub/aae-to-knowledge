@@ -26,6 +26,7 @@ Browser-only workflow (Playwright MCP). WSP consultants use the Salesforce UI, n
 
 - Playwright MCP (`browser_navigate`, `browser_snapshot`, `browser_click`, `browser_run_code_unsafe`, `browser_tabs`)
 - User logged into Salesforce in the driven browser; if login page appears, wait for user confirmation
+- Optional: run headless via Playwright MCP `--headless` — see [README.md](README.md#headless-mode)
 
 ## Workflow
 

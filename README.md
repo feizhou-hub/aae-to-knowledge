@@ -66,6 +66,64 @@ The skill is mostly markdown instructions for the agent, but a few small Node mo
 - Playwright MCP (`browser_navigate`, `browser_snapshot`, `browser_click`, `browser_run_code_unsafe`)
 - Logged into Workday Salesforce in the driven browser
 
+## Headless mode
+
+By default, Playwright MCP launches a **visible** browser so you can watch the agent work. To run the workflow without showing browser windows, enable headless mode in your MCP config.
+
+### Cursor (`~/.cursor/mcp.json`)
+
+```json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--headless"
+      ]
+    }
+  }
+}
+```
+
+Or set the environment variable:
+
+```json
+"env": {
+  "PLAYWRIGHT_MCP_HEADLESS": "true"
+}
+```
+
+Restart Cursor (or reload MCP servers) after changing this.
+
+### Salesforce login in headless mode
+
+Headless mode has no visible window for SSO or MFA. Use one of:
+
+- **Persistent profile** — log in once in headed mode, then reuse the profile:
+
+  ```json
+  "args": [
+    "-y",
+    "@playwright/mcp@latest",
+    "--headless",
+    "--user-data-dir",
+    "~/.playwright-mcp/salesforce-profile"
+  ]
+  ```
+
+- **`--storage-state`** — path to a saved auth state file (`PLAYWRIGHT_MCP_STORAGE_STATE`)
+- **Playwright browser extension** — connect to an existing logged-in Chrome/Edge tab (`--extension`)
+
+### Notes
+
+- Use **Playwright MCP** (`user-playwright`), not Cursor's built-in browser MCP — the IDE browser always opens a visible tab.
+- Headless only hides the browser UI. The review gate still applies: Steps 1–4 run as usual, and Step 5 waits for explicit approval before any Salesforce write.
+- Screenshots and snapshots still work headless; you just won't see live navigation.
+
+See [Playwright MCP configuration](https://playwright.dev/mcp/configuration/options) for all options.
+
 ## Quick start
 
 Run helpers from the cloned skill directory:
