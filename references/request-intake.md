@@ -1,6 +1,6 @@
-# Case Intake (Steps 1–3)
+# Request Intake (Steps 1–3)
 
-## Reading the case
+## Reading the request
 
 Navigate to the appointment link. Snapshot **Details** (usually default tab):
 
@@ -23,7 +23,7 @@ Read every non-private note top to bottom — don't grep only for technical keyw
 
 Resolution often lives in a **different note** than the root-cause explanation. Watch for:
 
-- A secondary consultant added mid-case ("adding X as secondary…")
+- A secondary consultant added mid-request ("adding X as secondary…")
 - Short meeting-recap or decision notes among administrative noise (invites, availability)
 
 If a snapshot is large, save to a file and grep/read `tabpanel "Notes"` / `tabpanel "Details"` sections only.

@@ -31,7 +31,7 @@ async (page) => {
 }
 ```
 
-From the case: **Knowledge** tab → **New Article** → default template → Next.
+From the request: **Knowledge** tab → **New Article** → default template → Next.
 
 ### Form fields
 

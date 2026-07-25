@@ -41,7 +41,7 @@ aae-to-knowledge/
 ├── set-rich-text-fields.js     # Playwright: set TinyMCE fields by label
 ├── extract-matrix.js           # Refresh category matrix from Salesforce
 └── references/
-    ├── case-intake.md
+    ├── request-intake.md
     ├── drafting.md
     ├── lightning-tips.md
     └── salesforce-writes.md

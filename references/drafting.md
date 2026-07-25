@@ -56,7 +56,7 @@ Generalize customer-specific context so the article helps any tenant with the sa
 
 #### Decide: sequential steps or parallel strategies?
 
-Read the case notes and decide which pattern fits **before** writing the Resolution. Do not default to numbered steps.
+Read the request notes and decide which pattern fits **before** writing the Resolution. Do not default to numbered steps.
 
 | Pattern | Use when | Format |
 |---------|----------|--------|

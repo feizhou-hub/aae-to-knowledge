@@ -6,13 +6,13 @@ description: >-
   duplicates, strips customer PII, saves a local markdown draft, and stops for
   human approval before any Salesforce write. Use whenever the user pastes a
   workday.lightning.force.com Appointment URL, asks to create/draft/summarize a
-  Knowledge Article from a case, or says "make a KA" — even on the first
+  Knowledge Article from a request, or says "make a KA" — even on the first
   message. "Create a KA" means local draft only; Salesforce writes require a
   follow-up approval. Use the bundled approval-gate and salesforce-write helpers
   in this skill folder.
 ---
 
-# WSP Case → Knowledge Article
+# WSP Request → Knowledge Article
 
 Browser-only workflow (Playwright MCP). WSP consultants use the Salesforce UI, not the API.
 
@@ -30,39 +30,39 @@ Browser-only workflow (Playwright MCP). WSP consultants use the Salesforce UI, n
 ## Workflow
 
 ```
-- [ ] Step 1: Read case (Details + public Notes)          → references/case-intake.md
-- [ ] Step 2: Check inline screenshots (if referenced)    → references/case-intake.md
-- [ ] Step 3: Search for duplicate Knowledge articles     → references/case-intake.md
+- [ ] Step 1: Read request (Details + public Notes)          → references/request-intake.md
+- [ ] Step 2: Check inline screenshots (if referenced)    → references/request-intake.md
+- [ ] Step 3: Search for duplicate Knowledge articles     → references/request-intake.md
 - [ ] Step 4: Draft locally (draft-REQ-######.md)         → references/drafting.md
 - [ ] STOP — present draft, ask for approval              → (below)
 - [ ] Step 5: Create Salesforce draft (after approval)    → references/salesforce-writes.md
 - [ ] Cleanup scratch files                               → references/lightning-tips.md
 ```
 
-### Step 1 — Read the case
+### Step 1 — Read the request
 
 Navigate to the appointment. Capture from **Details**: Subject, description, Record Type, Product Area, Capability. Open **Notes**; use only rows where **Private** is unchecked. Reconstruct chronologically (list is usually newest-first). Read every public note fully — resolution may be in a different note than the root-cause diagnosis.
 
-→ Full guidance: [references/case-intake.md](references/case-intake.md)
+→ Full guidance: [references/request-intake.md](references/request-intake.md)
 
 ### Step 2 — Screenshots
 
 Only if a note references pasted screenshots. Skip the Attachments tab. Inline images live in shadow DOM.
 
-→ Full guidance: [references/case-intake.md](references/case-intake.md#screenshots)
+→ Full guidance: [references/request-intake.md](references/request-intake.md#screenshots)
 
 ### Step 3 — Duplicate check
 
 Search Salesforce for core technical terms (not customer names). If a Published/Validated article covers the same root cause and resolution, stop and report it.
 
-→ Full guidance: [references/case-intake.md](references/case-intake.md#duplicate-check)
+→ Full guidance: [references/request-intake.md](references/request-intake.md#duplicate-check)
 
 ### Step 4 — Local draft
 
 Default template: **Knowledge Articles** (Description + Resolution, no separate Issue/Cause). Save `draft-REQ-######.md` in the project directory. Match house style:
 
 - **Generalize** when the resolution applies broadly; cite a specific integration or object as an example in the body, not the title
-- **Decide** whether Resolution items are sequential steps or parallel strategies based on the case — do not default to numbered steps
+- **Decide** whether Resolution items are sequential steps or parallel strategies based on the request — do not default to numbered steps
 - **Structure for scanability:** `###` headings + bullet lists in Resolution; avoid dense paragraphs (see drafting.md readability section)
 
 ```js
