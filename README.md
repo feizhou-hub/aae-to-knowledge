@@ -79,6 +79,60 @@ The first time you run the workflow, the agent opens a browser window. Log into 
 
 See [Headless mode](#headless-mode) to hide the browser window, and [Playwright MCP configuration](https://playwright.dev/mcp/configuration/options) for all options.
 
+## Usage
+
+After [install](#install), open a new agent chat in Cursor or Claude Code and describe what you want in plain language. You do not need to run scripts yourself — the agent follows [SKILL.md](SKILL.md) and uses Playwright MCP to read Salesforce.
+
+### Create a draft (Step 1 — paste one of these)
+
+**By appointment URL** (from the browser address bar):
+
+```
+Create a KA based on https://workday.lightning.force.com/lightning/r/Appointment__c/a0XVT00000XXXXXX/view
+```
+
+**By request number**:
+
+```
+Create a KA for REQ-439659
+```
+
+```
+Make a knowledge article from appointment REQ-439659
+```
+
+Other phrasing works too — `draft a KA`, `summarize this request as a knowledge article`, or pasting the Salesforce link without extra context.
+
+### What happens next
+
+| Turn | You | Agent |
+|------|-----|-------|
+| 1 | Ask to create a KA (examples above) | Reads the appointment, checks duplicates, saves `draft-REQ-######.md`, **stops and shows you the draft** |
+| 2 | Review the draft. Reply **approved**, **looks good**, **go ahead**, or **create it in Salesforce** | Creates the Salesforce draft article and returns the draft URL |
+
+On turn 1 the agent **never** saves to Salesforce — that is intentional ([review gate](AGENTS.md)). Request edits on turn 2 if the draft needs changes before approving.
+
+### Examples
+
+```
+Create a KA based on https://workday.lightning.force.com/lightning/r/Appointment__c/a0XVT00000AbCdE/view
+```
+
+```
+Create a knowledge article for REQ-462722
+```
+
+```
+Draft a KA from this AAE request: REQ-442467
+```
+
+### Tips
+
+- **Open a project folder as your workspace** so `draft-REQ-######.md` and the review-gate state are saved locally (the cloned skill directory works fine).
+- **Stay logged in** to Workday Salesforce in the Playwright browser (see [Log into Salesforce](#log-into-salesforce)).
+- If a **duplicate article** already exists, the agent reports it and stops instead of drafting.
+- The agent **generalizes** customer-specific details — do not expect tenant names or case IDs in the article body.
+
 ## Structure
 
 ```
