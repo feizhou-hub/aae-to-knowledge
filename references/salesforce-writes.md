@@ -84,22 +84,35 @@ Use proper structure so Salesforce renders borders:
 </table>
 ```
 
-## Related Categories
+## Related Categories (mandatory — 3 levels)
+
+Always set **Product Line**, **Product Area**, and **Product Capability**. Use `resolveCategories()` from the appointment's Product Area and Capability:
 
 ```js
 const { resolveCategories, productCategoryMatrix } = require('./lib');
-const matrix = productCategoryMatrix;
 
-globalThis.__kaCategories = resolveCategories(productArea, capability, matrix);
+globalThis.__kaCategories = resolveCategories(productArea, capability, productCategoryMatrix);
 globalThis.__kaArticleUrl = '<saved article url>';
 // getMcpFillScript('REQ-######')
 ```
 
 - Page opens with an empty first row — fill it, don't click New unless needed
-- If Capability has no exact match, pick closest semantic match and tell the user
-- Leave Product Capability blank when article spans multiple integration types
+- If Capability has no exact matrix match, use the appointment capability name or closest semantic match
+- **Never** leave Product Capability blank when the appointment has a Capability — drafts must propose all 3 levels
 
 Mappings in `product-category-matrix.json` (e.g. Integration Management → Platform and Product Extensions / Integration).
+
+## Bulk creation (up to 3 per session)
+
+When creating multiple approved drafts in Step 5:
+
+- Use **one** Playwright MCP session for the whole batch
+- Drive each article in a single `browser_run_code_unsafe` script (form fill → Save → rich text → Related Categories → next article)
+- Batch up to **3 REQ ids**; if more than 3, finish the batch and start the next in a follow-up turn
+- Do **not** `browser_navigate` to `/lightning/page/home` between articles in the same batch
+- Do **not** `pkill playwright-mcp` or `browser_close` mid-batch
+
+Return a draft URL for each article when the batch completes.
 
 ## After Save
 

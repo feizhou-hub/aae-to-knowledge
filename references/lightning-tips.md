@@ -11,6 +11,19 @@
 
 If `browser_navigate` lands on a login page, tell the user and wait for confirmation before re-navigating. Don't automate login.
 
+## Browser session (mandatory)
+
+Repeated Okta/SAML prompts usually mean competing Chrome processes on the same profile.
+
+| Do | Don't |
+|----|-------|
+| One Playwright MCP session per batch | `launchPersistentContext`, scratch Node Chrome, `browser_close`, or `pkill playwright-mcp` |
+| `browser_run_code_unsafe` + `salesforce-session.js` `ensureReady()` | Standalone `browser_navigate` when a script can reuse the current tab |
+| Batch read/create up to **3 REQs** per session | Navigate to `/lightning/page/home` (scripts use Knowledge list fallback instead) |
+| Leave MCP running after login | Close the browser mid-batch |
+
+For bulk reads use `getMcpReadAppointmentBatchScript()` from `lib/salesforce-read.js`.
+
 ## Cleanup
 
 Before finishing, delete scratch files created during the workflow:

@@ -113,7 +113,7 @@ Save as `draft-REQ-######.md` in the project directory (not chat-only). Include:
 
 - Source appointment link, template, Target WSP Service
 - Title, URL Name, Description, Resolution, Internal Notes
-- Proposed Related Categories
+- Proposed Related Categories — **all 3 levels** (Product Line, Product Area, Product Capability from the appointment; never `*(none)*` when a capability exists)
 - Duplicate check summary
 
 Then register the draft:

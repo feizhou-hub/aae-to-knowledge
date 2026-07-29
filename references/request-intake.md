@@ -1,5 +1,18 @@
 # Request Intake (Steps 1–3)
 
+## Multiple requests (batch read)
+
+When the user provides **2–3 REQ ids**, read all appointments in **one** `browser_run_code_unsafe` call — do not open a new browser or navigate to home between them.
+
+```js
+const { getMcpReadAppointmentBatchScript } = require('./lib');
+
+// Pass to browser_run_code_unsafe — returns { batch, appointments, pageUrl }
+getMcpReadAppointmentBatchScript(['REQ-238778', 'REQ-241220', 'REQ-298710']);
+```
+
+Then run Steps 2–4 **per REQ** (screenshots, duplicate check, local draft). Present all drafts before stopping for approval.
+
 ## Reading the request
 
 Navigate to the appointment link. Snapshot **Details** (usually default tab):
@@ -28,9 +41,15 @@ Resolution often lives in a **different note** than the root-cause explanation. 
 
 If a snapshot is large, save to a file and grep/read `tabpanel "Notes"` / `tabpanel "Details"` sections only.
 
-## Screenshots
+## Attachments tab (only when user explicitly requests)
 
-Skip the Attachments tab. Consultants often paste screenshots **inline in note bodies**. These do not appear in Attachments or Notes & Attachments counts.
+**Standard intake:** Details + public Notes only. **Do not** open the **Attachments** tab unless the user explicitly asks (e.g. "check attachments", "review files in attachments tab").
+
+When requested: open **Attachments**, list files, and open relevant images for context. Optionally embed illustrative screenshots in the draft or Salesforce article only when they add clear value (and strip customer PII per audience rules below).
+
+## Screenshots (inline in Notes)
+
+By default, check **inline** images in note bodies only — not the Attachments tab. Consultants often paste screenshots **inline in note bodies**. These do not appear in Attachments or Notes & Attachments counts.
 
 Inline images are inside Lightning **shadow DOM** — plain `querySelectorAll('img')` won't find them. Walk shadow roots:
 

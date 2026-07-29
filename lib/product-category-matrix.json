@@ -117,14 +117,19 @@
     },
     "Human Capital Management": {
       "Absence": [],
-      "Advanced Compensation": [],
+      "Advanced Compensation": [
+        "Coordination of Events"
+      ],
       "Asset Tracking": [],
       "Benefits": [],
       "Career and Development": [],
       "Case Management": [],
       "Cloud Connect for Benefits": [],
       "Cloud Connect for Human Capital Management": [],
-      "Compensation": [],
+      "Compensation": [
+        "Compensation Basis",
+        "Compensation Grades & Profiles"
+      ],
       "Core Human Capital Management": [],
       "Custom Cards": [],
       "Journey Paths": [],

@@ -24,10 +24,24 @@ Browser-only workflow (Playwright MCP). WSP consultants use the Salesforce UI, n
 
 ## Prerequisites
 
-- Playwright MCP installed and connected — see [README.md](README.md#2-install-playwright-mcp)
-- Playwright MCP tools: `browser_navigate`, `browser_snapshot`, `browser_click`, `browser_run_code_unsafe`, `browser_tabs`
+- Playwright MCP (`browser_navigate`, `browser_snapshot`, `browser_click`, `browser_run_code_unsafe`, `browser_tabs`)
 - User logged into Salesforce in the driven browser; if login page appears, wait for user confirmation
-- Optional: run headless via Playwright MCP `--headless` — see [README.md](README.md#headless-mode)
+- **One MCP browser session** — do not launch a second Chrome or `pkill playwright-mcp` mid-workflow (see [AGENTS.md](AGENTS.md#salesforce-browser-session-mandatory))
+
+## Multiple requests (bulk)
+
+When the user gives **2–3 REQ ids** in one turn:
+
+1. **Steps 1–3** — one `browser_run_code_unsafe` batch read (no home navigation between appointments)
+2. **Step 4** — save each `draft-REQ-######.md`, `registerDraft()` each, present all drafts, **STOP**
+3. **Step 5** (after approval) — one MCP session; create up to **3 articles** per batch script; more than 3 → finish batch, start next batch in a follow-up turn
+
+```js
+const { getMcpReadAppointmentBatchScript } = require('./lib');
+// Pass getMcpReadAppointmentBatchScript(['REQ-238778', 'REQ-241220']) to browser_run_code_unsafe
+```
+
+→ Session rules: [AGENTS.md](AGENTS.md#salesforce-browser-session-mandatory) · Batch writes: [references/salesforce-writes.md](references/salesforce-writes.md#bulk-creation-up-to-3-per-session)
 
 ## Workflow
 
@@ -47,9 +61,11 @@ Navigate to the appointment. Capture from **Details**: Subject, description, Rec
 
 → Full guidance: [references/request-intake.md](references/request-intake.md)
 
-### Step 2 — Screenshots
+### Step 2 — Screenshots (notes only, by default)
 
-Only if a note references pasted screenshots. Skip the Attachments tab. Inline images live in shadow DOM.
+Only if a note references pasted **inline** screenshots. Inline images live in shadow DOM.
+
+**Do not open the Attachments tab** unless the user explicitly asks (e.g. "check attachments", "attachments tab"). That is not part of the standard workflow — it adds significant time and is only for explicit requests.
 
 → Full guidance: [references/request-intake.md](references/request-intake.md#screenshots)
 
@@ -107,5 +123,5 @@ Remind the user it is a **draft** (not published). Do not click Publish.
 
 | Need | Where |
 |------|-------|
-| Review gate, category resolver, rich-text helpers | `lib/` — see [AGENTS.md](AGENTS.md) |
+| Review gate, category resolver, rich-text helpers, batch read | `lib/` — see [AGENTS.md](AGENTS.md) |
 | Lightning navigation gotchas | [references/lightning-tips.md](references/lightning-tips.md) |
