@@ -30,16 +30,38 @@ Browser-only workflow (Playwright MCP). WSP consultants use the Salesforce UI, n
 
 ## Multiple requests (bulk)
 
-When the user gives **2–3 REQ ids** in one turn:
+Hard limit: **3 REQ ids per Playwright MCP session** (reads and writes). `getMcpReadAppointmentBatchScript()` only accepts the first 3 ids — it does **not** auto-chunk longer lists.
+
+### 2–3 REQ ids in one turn
 
 1. **Steps 1–3** — one `browser_run_code_unsafe` batch read (no home navigation between appointments)
 2. **Step 4** — save each `draft-REQ-######.md`, `registerDraft()` each, present all drafts, **STOP**
-3. **Step 5** (after approval) — one MCP session; create up to **3 articles** per batch script; more than 3 → finish batch, start next batch in a follow-up turn
+3. **Step 5** (after approval) — one MCP session; create up to **3 articles** per batch script
 
 ```js
 const { getMcpReadAppointmentBatchScript } = require('./lib');
 // Pass getMcpReadAppointmentBatchScript(['REQ-238778', 'REQ-241220']) to browser_run_code_unsafe
 ```
+
+### More than 3 REQ ids
+
+**Chunk the list yourself** — process at most 3 per turn for Steps 1–4, and at most 3 per turn for Step 5 after approval.
+
+Example: user asks for REQ-A through REQ-E (5 ids).
+
+| Turn | Action |
+|------|--------|
+| 1 | Batch read + draft REQ-A, B, C → present all 3 drafts → **STOP** |
+| 2 | User approves → create 3 Salesforce drafts (A, B, C) |
+| 3 | Batch read + draft REQ-D, E → present both drafts → **STOP** |
+| 4 | User approves → create 2 Salesforce drafts (D, E) |
+
+Rules for every batch:
+
+- **One** Playwright MCP session per batch — do not `browser_close` or restart MCP mid-batch
+- Do **not** `browser_navigate` to `/lightning/page/home` between appointments or articles in the same batch
+- Each REQ still gets its own `registerDraft()` / review gate — approval can cover one or all drafts in a batch
+- Tell the user how many REQs remain after each batch
 
 → Session rules: [AGENTS.md](AGENTS.md#salesforce-browser-session-mandatory) · Batch writes: [references/salesforce-writes.md](references/salesforce-writes.md#bulk-creation-up-to-3-per-session)
 

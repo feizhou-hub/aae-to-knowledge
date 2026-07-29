@@ -2,7 +2,11 @@
 
 ## Multiple requests (batch read)
 
-When the user provides **2–3 REQ ids**, read all appointments in **one** `browser_run_code_unsafe` call — do not open a new browser or navigate to home between them.
+Hard limit: **3 REQ ids per `browser_run_code_unsafe` call**. `getMcpReadAppointmentBatchScript()` uses `.slice(0, 3)` — ids beyond the third are **silently dropped** unless you chunk the list and run another batch in a follow-up turn.
+
+### 2–3 REQ ids
+
+Read all appointments in **one** `browser_run_code_unsafe` call — do not open a new browser or navigate to home between them.
 
 ```js
 const { getMcpReadAppointmentBatchScript } = require('./lib');
@@ -12,6 +16,10 @@ getMcpReadAppointmentBatchScript(['REQ-238778', 'REQ-241220', 'REQ-298710']);
 ```
 
 Then run Steps 2–4 **per REQ** (screenshots, duplicate check, local draft). Present all drafts before stopping for approval.
+
+### More than 3 REQ ids
+
+Split the user's list into chunks of 3. Process chunk 1 (Steps 1–4), present drafts, **STOP**. In a follow-up turn, process chunk 2, and so on. Do **not** pass all ids to `getMcpReadAppointmentBatchScript()` at once — only the current chunk (max 3).
 
 ## Reading the request
 
