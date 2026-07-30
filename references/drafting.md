@@ -115,11 +115,21 @@ Review and adjust domain security so users cannot override eligibility.
 ```html
 <table style="width: 100%; border: none; border-collapse: collapse; margin: 0;">
 <tr>
-<td style="width: 44px; vertical-align: top; border: none; padding: 0;">
+<td style="width: 44px; vertical-align: top; border: none; padding: 0; height: 1px;">
+<table style="width: 28px; margin: 0 auto; border: none; border-collapse: collapse; height: 100%;" height="100%">
+<tr>
+<td style="border: none; padding: 0; text-align: center; vertical-align: top;">
 <div style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #0176d3; color: #0176d3; font-weight: 700; text-align: center; line-height: 26px; font-size: 14px;">1</div>
-<div style="width: 14px; margin: 6px auto 0; border-left: 2px dotted #c9c9c9; min-height: 20px;"></div>
 </td>
-<td style="vertical-align: top; border: none; padding: 0 0 20px 12px;">
+</tr>
+<tr style="height: 100%;">
+<td style="border: none; padding: 6px 0 0 0; vertical-align: top; height: 100%;">
+<div style="height: 100%; min-height: 48px; margin-left: 13px; border-left: 2px dotted #c9c9c9;"></div>
+</td>
+</tr>
+</table>
+</td>
+<td style="vertical-align: top; border: none; padding: 0 0 0 12px;">
 <p style="margin: 0 0 4px; font-weight: 700; font-size: 15px;">Identify affected security groups</p>
 <p style="margin: 0 0 12px; font-style: italic; color: #706e6b; font-size: 13px;">Review security group domain access</p>
 <ol style="margin: 0; padding-left: 20px;">
@@ -131,7 +141,7 @@ Review and adjust domain security so users cannot override eligibility.
 </table>
 ```
 
-Repeat the table block for each step. Omit the dotted connector `div` on the **last** step. Use nested `<ul>` inside an `<ol>` item when a step has sub-options (for example, field parameters or picklist values).
+Repeat the outer table for each step. The dotted line must run from the bottom of one circle to the top of the next — use the nested `height: 100%` connector row (not a short stub `div`). Omit the connector row on the **last** step.
 
 ### PII stripping (prose)
 
