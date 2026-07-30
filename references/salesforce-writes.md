@@ -109,7 +109,7 @@ For numbered procedures, use the **step express** layout: circled step number wi
 </tr>
 </table>
 </td>
-<td style="vertical-align: top; border: none; padding: 0 0 0 12px;">
+<td style="vertical-align: top; border: none; padding: 0 0 20px 12px;">
 <p style="margin: 0 0 4px; font-weight: 700; font-size: 15px;">Identify affected security groups</p>
 <p style="margin: 0 0 12px; font-style: italic; color: #706e6b; font-size: 13px;">Review security group domain access</p>
 <ol style="margin: 0; padding-left: 20px;">
@@ -121,7 +121,7 @@ For numbered procedures, use the **step express** layout: circled step number wi
 </table>
 ```
 
-Repeat for each step. The dotted line must span from one circle to the next — use the nested `height: 100%` connector row, not a short stub. Omit the connector row on the last step. Nest `<ul>` inside an `<ol>` item for sub-options (for example, parameter fields). See [drafting.md](drafting.md#resolution-readability-rich-text) for markdown equivalents.
+Repeat for each step. The dotted line must span from one circle to the next — use the nested `height: 100%` connector row, not a short stub. Add `padding-bottom: 20px` on the content cell when another step follows (last step: `padding-bottom: 0`). Omit the connector row on the last step. Nest `<ul>` inside an `<ol>` item for sub-options (for example, parameter fields). See [drafting.md](drafting.md#resolution-readability-rich-text) for markdown equivalents.
 
 ## Related Categories (mandatory — 3 levels)
 

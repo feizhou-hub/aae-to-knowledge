@@ -129,7 +129,7 @@ Review and adjust domain security so users cannot override eligibility.
 </tr>
 </table>
 </td>
-<td style="vertical-align: top; border: none; padding: 0 0 0 12px;">
+<td style="vertical-align: top; border: none; padding: 0 0 20px 12px;">
 <p style="margin: 0 0 4px; font-weight: 700; font-size: 15px;">Identify affected security groups</p>
 <p style="margin: 0 0 12px; font-style: italic; color: #706e6b; font-size: 13px;">Review security group domain access</p>
 <ol style="margin: 0; padding-left: 20px;">
@@ -141,7 +141,7 @@ Review and adjust domain security so users cannot override eligibility.
 </table>
 ```
 
-Repeat the outer table for each step. The dotted line must run from the bottom of one circle to the top of the next — use the nested `height: 100%` connector row (not a short stub `div`). Omit the connector row on the **last** step.
+Repeat the outer table for each step. The dotted line must run from the bottom of one circle to the top of the next — use the nested `height: 100%` connector row (not a short stub `div`). Add `padding-bottom: 20px` on the content cell when another step follows (omit on the last step). Omit the connector row on the **last** step.
 
 ### PII stripping (prose)
 
