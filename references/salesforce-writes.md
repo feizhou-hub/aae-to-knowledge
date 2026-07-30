@@ -84,6 +84,25 @@ Use proper structure so Salesforce renders borders:
 </table>
 ```
 
+### Sequential steps in Resolution (HTML)
+
+For numbered procedures, use `<h3>Step N: Title</h3>` headings and a light horizontal rule between each step. Do **not** use `<p><strong>Step N:</strong></p>` alone — it reads as body text. Do **not** rely on `<p><br></p>` alone — Salesforce often collapses blank paragraphs.
+
+```html
+<p>One-sentence framing intro.</p>
+<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
+<h3>Step 1: Identify affected security groups</h3>
+<p>First action — one or two short sentences.</p>
+<p>Verification or second point if needed.</p>
+<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
+<h3>Step 2: Remove the domain from affected groups</h3>
+<p>Next action.</p>
+<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
+<blockquote><p><strong>Note:</strong> Caveat at the end.</p></blockquote>
+```
+
+Split long step bodies into multiple short `<p>` tags (one idea per paragraph). Use `<ul>` under a step when listing options. See [drafting.md](drafting.md#resolution-readability-rich-text) for markdown equivalents.
+
 ## Related Categories (mandatory — 3 levels)
 
 Always set **Product Line**, **Product Area**, and **Product Capability**. Use `resolveCategories()` from the appointment's Product Area and Capability:

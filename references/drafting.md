@@ -60,7 +60,7 @@ Read the request notes and decide which pattern fits **before** writing the Reso
 
 | Pattern | Use when | Format |
 |---------|----------|--------|
-| **Sequential steps** | Each action depends on the prior one; there is one correct order (configure → test → deploy; diagnose → fix → verify) | `Step 1:` / `Step 2:` or a numbered list |
+| **Sequential steps** | Each action depends on the prior one; there is one correct order (configure → test → deploy; diagnose → fix → verify) | `### Step N: Title` heading + short body; separator line between steps (see readability below) |
 | **Parallel strategies** | Recommendations are independent; the customer can apply one or more without doing the others first (batch sizing, parallel runs, off-peak scheduling, monitoring) | `###` heading per strategy + bullet list (see readability below) |
 
 **Ask:** Would step 2 still make sense if the customer skipped step 1? If yes, they are parallel strategies, not steps.
@@ -73,11 +73,12 @@ Salesforce renders Resolution as HTML. Dense paragraphs are hard to scan — str
 
 | Element | Do | Avoid |
 |---------|-----|-------|
-| **Strategy headings** | `###` / `<h3>` per parallel strategy or sequential phase | Bold text on its own line (looks like body text in TinyMCE) |
-| **Body under each heading** | Bullet list with one idea per line | Long paragraphs mixing rationale, numbers, and examples |
+| **Step / strategy headings** | `### Step N: Title` / `<h3>` per step or parallel strategy | Bold text on its own line (looks like body text in TinyMCE) |
+| **Spacing between steps** | Blank line in markdown; `<hr>` separator + `<h3>` in Salesforce HTML | Stacked paragraphs with no visual break between steps |
+| **Body under each heading** | 1–2 short paragraphs or a bullet list (one idea per line) | Long paragraphs mixing rationale, numbers, and examples |
 | **Bullet lead-ins** | `**Bold label:** explanation` (e.g. `**Test in sandbox first.** Validate batch size…`) | Scattering bold on random words inside prose |
 | **Intro** | One or two sentences framing the approach | Repeating the Description |
-| **Caveats** | `> **Note:**` blockquote at the end | Burying caveats inside strategy bullets |
+| **Caveats** | `> **Note:**` blockquote at the end (after final separator) | Burying caveats inside step bullets |
 
 **Parallel strategies example (markdown):**
 
@@ -92,14 +93,39 @@ Salesforce renders Resolution as HTML. Dense paragraphs are hard to scan — str
 **Sequential steps example (markdown):**
 
 ```markdown
-**Step 1: Configure the keystore**
+Review and adjust domain security so users cannot override eligibility.
 
-Import the certificate into the tenant keystore…
+### Step 1: Identify affected security groups
 
-**Step 2: Verify the installation**
+Locate the security groups assigned to roles that can add compensation plans.
 
-Run the connectivity test…
+Confirm whether those groups include the **Select Any Compensation Package** domain.
+
+### Step 2: Remove the domain from affected groups
+
+Edit the security group and remove the domain assignment.
+
+Save the security group changes.
+
+> **Note:** Caveat or doc pointer at the end.
 ```
+
+**Sequential steps in Salesforce HTML** — use `<h3>` headings and a light rule between steps so they scan like separate blocks:
+
+```html
+<p>One-sentence framing intro.</p>
+<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
+<h3>Step 1: Identify affected security groups</h3>
+<p>First action — keep to one or two short sentences.</p>
+<p>Second sentence or verification point if needed.</p>
+<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
+<h3>Step 2: Remove the domain from affected groups</h3>
+<p>Next action.</p>
+<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
+<blockquote><p><strong>Note:</strong> Caveat at the end.</p></blockquote>
+```
+
+Do **not** rely on `<p><br></p>` alone — Salesforce often collapses it. Prefer `<hr>` plus `<h3>` for sequential procedures.
 
 ### PII stripping (prose)
 
