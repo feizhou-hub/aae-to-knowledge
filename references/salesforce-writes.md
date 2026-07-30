@@ -67,10 +67,12 @@ Embed screenshots: `<img src="data:image/png;base64,...">` — Salesforce rewrit
 
 ### HTML tables
 
-Use proper structure so Salesforce renders borders:
+Leave visible space between the last paragraph and a comparison table so prose does not run into the table border. In markdown, use a blank line; in Salesforce HTML, insert `<p><br></p>` before the table **and** set `margin-top: 16px` on the `<table>` (TinyMCE often collapses blank `<p>` tags alone).
 
 ```html
-<table style="border-collapse: collapse; width: 100%;" border="1" cellpadding="6" cellspacing="0">
+<p>Root cause explanation ending the prose block.</p>
+<p><br></p>
+<table style="border-collapse: collapse; width: 100%; margin-top: 16px;" border="1" cellpadding="6" cellspacing="0">
   <thead>
     <tr>
       <th style="background-color: #f3f3f3; text-align: left; border: 1px solid #d8dde6; padding: 8px;">Header</th>

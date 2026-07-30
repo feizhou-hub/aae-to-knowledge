@@ -41,7 +41,7 @@ In Salesforce, Title auto-fills URL Name and may concatenate or truncate oddly �
 1. Lead with trigger: "When attempting to X…"
 2. State exact symptom; quote literal errors verbatim (code block for logs, **bold** for short inline)
 3. Name root cause; **bold** key technical term on first use
-4. Use a comparison table when two similar concepts are confused
+4. Use a comparison table when two similar concepts are confused — leave a **blank line** between the preceding paragraph and the table (markdown and HTML)
 5. Link official Workday docs if they exist in source material — don't invent links
 
 Generalize customer-specific context so the article helps any tenant with the same pattern. Name a specific integration or object parenthetically as an example when useful.
