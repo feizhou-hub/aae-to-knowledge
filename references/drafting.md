@@ -42,7 +42,8 @@ In Salesforce, Title auto-fills URL Name and may concatenate or truncate oddly �
 2. State exact symptom; quote literal errors verbatim (code block for logs, **bold** for short inline)
 3. Name root cause; **bold** key technical term on first use
 4. Use a comparison table when two similar concepts are confused — leave a **blank line** between the preceding paragraph and the table (markdown and HTML)
-5. Link official Workday docs if they exist in source material — don't invent links
+5. **Optionally** use a UML-style diagram when branching logic is hard to scan in prose (3+ if/else paths, integration hand-offs, role permissions) — see [uml-diagrams.md](uml-diagrams.md)
+6. Link official Workday docs if they exist in source material — don't invent links
 
 Generalize customer-specific context so the article helps any tenant with the same pattern. Name a specific integration or object parenthetically as an example when useful.
 
@@ -66,6 +67,18 @@ Read the request notes and decide which pattern fits **before** writing the Reso
 **Ask:** Would step 2 still make sense if the customer skipped step 1? If yes, they are parallel strategies, not steps.
 
 Do not relabel parallel strategies as steps, and do not flatten a true procedure into unordered bullets.
+
+#### Branching logic — optional diagrams
+
+When the Resolution (or Description) has **three or more conditional paths** — integration-type forks, error-code branches, security-role checks — **consider** an **activity flowchart** instead of nested "If… else if…" paragraphs. Use your judgment; plain prose or a comparison table may still be clearer for simple cases.
+
+| Pattern | Diagram type | Where |
+|---------|--------------|-------|
+| "Which integration type / config applies?" | Activity (`flowchart TD`) | Description or Resolution intro |
+| Request/response order between systems | Sequence (`sequenceDiagram`) | Description |
+| Who can perform an action | Use case table or small flowchart | Resolution |
+
+Write Mermaid in the local `draft-REQ-######.md`; convert to Salesforce HTML in Step 5. Full syntax, templates, and anti-patterns: [uml-diagrams.md](uml-diagrams.md).
 
 #### Resolution readability (rich text)
 

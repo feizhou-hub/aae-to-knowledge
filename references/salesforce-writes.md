@@ -123,6 +123,18 @@ For numbered procedures, use the **step express** layout: circled step number wi
 
 Repeat for each step. The dotted line must span from one circle to the next — use the nested `height: 100%` connector row, not a short stub. Add `padding-bottom: 20px` on the content cell when another step follows (last step: `padding-bottom: 0`). Omit the connector row on the last step. Nest `<ul>` inside an `<ol>` item for sub-options (for example, parameter fields). See [drafting.md](drafting.md#resolution-readability-rich-text) for markdown equivalents.
 
+### UML diagrams (optional — activity, sequence, use case)
+
+TinyMCE does **not** render Mermaid. When the approved draft includes a diagram, convert fenced ` ```mermaid ` blocks to HTML before setting `__kaRichTextFields`.
+
+| Draft (Mermaid) | Salesforce HTML |
+|-----------------|-------------------|
+| `flowchart TD` / `flowchart LR` | Bordered table with `→` arrows (activity rail) |
+| `sequenceDiagram` | Step / From / To / Message table |
+| Use case (actors) | Actor / action comparison table |
+
+Templates and when to diagram: [uml-diagrams.md](uml-diagrams.md). Simple flowcharts can be auto-converted via `mdToHtml()` from `require('./lib')`.
+
 ## Related Categories (mandatory — 3 levels)
 
 Always set **Product Line**, **Product Area**, and **Product Capability**. Use `resolveCategories()` from the appointment's Product Area and Capability:
