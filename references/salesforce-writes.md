@@ -86,24 +86,32 @@ Leave visible space between the last paragraph and a comparison table so prose d
 </table>
 ```
 
-### Sequential steps in Resolution (HTML)
+### Sequential steps in Resolution (step express HTML)
 
-For numbered procedures, use `<h3>Step N: Title</h3>` headings and a light horizontal rule between each step. Do **not** use `<p><strong>Step N:</strong></p>` alone — it reads as body text. Do **not** rely on `<p><br></p>` alone — Salesforce often collapses blank paragraphs.
+For numbered procedures, use the **step express** layout: circled step number with dotted connector rail, bold title, italic context line, and numbered `<ol>` sub-steps. Do **not** use `<p><strong>Step N:</strong></p>` alone — it reads as body text.
 
 ```html
 <p>One-sentence framing intro.</p>
-<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
-<h3>Step 1: Identify affected security groups</h3>
-<p>First action — one or two short sentences.</p>
-<p>Verification or second point if needed.</p>
-<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
-<h3>Step 2: Remove the domain from affected groups</h3>
-<p>Next action.</p>
-<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
-<blockquote><p><strong>Note:</strong> Caveat at the end.</p></blockquote>
+<p><br></p>
+<table style="width: 100%; border: none; border-collapse: collapse; margin: 0;">
+<tr>
+<td style="width: 44px; vertical-align: top; border: none; padding: 0;">
+<div style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #0176d3; color: #0176d3; font-weight: 700; text-align: center; line-height: 26px; font-size: 14px;">1</div>
+<div style="width: 14px; margin: 6px auto 0; border-left: 2px dotted #c9c9c9; min-height: 20px;"></div>
+</td>
+<td style="vertical-align: top; border: none; padding: 0 0 20px 12px;">
+<p style="margin: 0 0 4px; font-weight: 700; font-size: 15px;">Identify affected security groups</p>
+<p style="margin: 0 0 12px; font-style: italic; color: #706e6b; font-size: 13px;">Review security group domain access</p>
+<ol style="margin: 0; padding-left: 20px;">
+<li>First numbered action.</li>
+<li>Verification or second action.</li>
+</ol>
+</td>
+</tr>
+</table>
 ```
 
-Split long step bodies into multiple short `<p>` tags (one idea per paragraph). Use `<ul>` under a step when listing options. See [drafting.md](drafting.md#resolution-readability-rich-text) for markdown equivalents.
+Repeat for each step. Omit the dotted connector `div` on the last step. Nest `<ul>` inside an `<ol>` item for sub-options (for example, parameter fields). See [drafting.md](drafting.md#resolution-readability-rich-text) for markdown equivalents.
 
 ## Related Categories (mandatory — 3 levels)
 

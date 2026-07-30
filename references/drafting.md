@@ -60,7 +60,7 @@ Read the request notes and decide which pattern fits **before** writing the Reso
 
 | Pattern | Use when | Format |
 |---------|----------|--------|
-| **Sequential steps** | Each action depends on the prior one; there is one correct order (configure → test → deploy; diagnose → fix → verify) | `### Step N: Title` heading + short body; separator line between steps (see readability below) |
+| **Sequential steps** | Each action depends on the prior one; there is one correct order (configure → test → deploy; diagnose → fix → verify) | **Step express** layout: numbered circle + title + italic context + numbered sub-steps (see below) |
 | **Parallel strategies** | Recommendations are independent; the customer can apply one or more without doing the others first (batch sizing, parallel runs, off-peak scheduling, monitoring) | `###` heading per strategy + bullet list (see readability below) |
 
 **Ask:** Would step 2 still make sense if the customer skipped step 1? If yes, they are parallel strategies, not steps.
@@ -73,8 +73,8 @@ Salesforce renders Resolution as HTML. Dense paragraphs are hard to scan — str
 
 | Element | Do | Avoid |
 |---------|-----|-------|
-| **Step / strategy headings** | `### Step N: Title` / `<h3>` per step or parallel strategy | Bold text on its own line (looks like body text in TinyMCE) |
-| **Spacing between steps** | Blank line in markdown; `<hr>` separator + `<h3>` in Salesforce HTML | Stacked paragraphs with no visual break between steps |
+| **Step / strategy headings** | Step express: circled number + bold title + italic context line; or `###` for parallel strategies | Bold text on its own line (looks like body text in TinyMCE) |
+| **Spacing between steps** | Dotted vertical connector between numbered circles in step express HTML | Stacked paragraphs with no visual break between steps |
 | **Body under each heading** | 1–2 short paragraphs or a bullet list (one idea per line) | Long paragraphs mixing rationale, numbers, and examples |
 | **Bullet lead-ins** | `**Bold label:** explanation` (e.g. `**Test in sandbox first.** Validate batch size…`) | Scattering bold on random words inside prose |
 | **Intro** | One or two sentences framing the approach | Repeating the Description |
@@ -90,42 +90,48 @@ Salesforce renders Resolution as HTML. Dense paragraphs are hard to scan — str
 - **Example:** partition 3 million records into 60 files of 50,000 each.
 ```
 
-**Sequential steps example (markdown):**
+**Sequential steps example (markdown — step express):**
 
 ```markdown
 Review and adjust domain security so users cannot override eligibility.
 
-### Step 1: Identify affected security groups
+**1 — Identify affected security groups**
+*Review security group domain access*
 
-Locate the security groups assigned to roles that can add compensation plans.
+1. Locate the security groups assigned to roles that can add compensation plans.
+2. Confirm whether those groups include the **Select Any Compensation Package** domain.
 
-Confirm whether those groups include the **Select Any Compensation Package** domain.
+**2 — Remove the domain from affected groups**
+*Update security group domains*
 
-### Step 2: Remove the domain from affected groups
-
-Edit the security group and remove the domain assignment.
-
-Save the security group changes.
+1. Edit the security group and remove the domain assignment.
+2. Save the security group changes.
 
 > **Note:** Caveat or doc pointer at the end.
 ```
 
-**Sequential steps in Salesforce HTML** — use `<h3>` headings and a light rule between steps so they scan like separate blocks:
+**Step express in Salesforce HTML** — numbered circle rail, bold title, italic context, numbered sub-steps:
 
 ```html
-<p>One-sentence framing intro.</p>
-<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
-<h3>Step 1: Identify affected security groups</h3>
-<p>First action — keep to one or two short sentences.</p>
-<p>Second sentence or verification point if needed.</p>
-<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
-<h3>Step 2: Remove the domain from affected groups</h3>
-<p>Next action.</p>
-<hr style="border: none; border-top: 1px solid #d8dde6; margin: 16px 0;">
-<blockquote><p><strong>Note:</strong> Caveat at the end.</p></blockquote>
+<table style="width: 100%; border: none; border-collapse: collapse; margin: 0;">
+<tr>
+<td style="width: 44px; vertical-align: top; border: none; padding: 0;">
+<div style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid #0176d3; color: #0176d3; font-weight: 700; text-align: center; line-height: 26px; font-size: 14px;">1</div>
+<div style="width: 14px; margin: 6px auto 0; border-left: 2px dotted #c9c9c9; min-height: 20px;"></div>
+</td>
+<td style="vertical-align: top; border: none; padding: 0 0 20px 12px;">
+<p style="margin: 0 0 4px; font-weight: 700; font-size: 15px;">Identify affected security groups</p>
+<p style="margin: 0 0 12px; font-style: italic; color: #706e6b; font-size: 13px;">Review security group domain access</p>
+<ol style="margin: 0; padding-left: 20px;">
+<li>First numbered action.</li>
+<li>Second numbered action or verification.</li>
+</ol>
+</td>
+</tr>
+</table>
 ```
 
-Do **not** rely on `<p><br></p>` alone — Salesforce often collapses it. Prefer `<hr>` plus `<h3>` for sequential procedures.
+Repeat the table block for each step. Omit the dotted connector `div` on the **last** step. Use nested `<ul>` inside an `<ol>` item when a step has sub-options (for example, field parameters or picklist values).
 
 ### PII stripping (prose)
 
