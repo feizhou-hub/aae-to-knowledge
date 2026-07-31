@@ -41,11 +41,60 @@ In Salesforce, Title auto-fills URL Name and may concatenate or truncate oddly �
 1. Lead with trigger: "When attempting to X…"
 2. State exact symptom; quote literal errors verbatim (code block for logs, **bold** for short inline)
 3. Name root cause; **bold** key technical term on first use
-4. Use a comparison table when two similar concepts are confused — leave a **blank line** between the preceding paragraph and the table (markdown and HTML)
+4. **Comparison tables** when two similar concepts are confused — see [When to use a comparison table](#when-to-use-a-comparison-table) (mandatory spacing rules)
 5. **Optionally** use a UML-style diagram when branching logic is hard to scan in prose (3+ if/else paths, integration hand-offs, role permissions) — see [uml-diagrams.md](uml-diagrams.md)
 6. Link official Workday docs if they exist in source material — don't invent links
 
 Generalize customer-specific context so the article helps any tenant with the same pattern. Name a specific integration or object parenthetically as an example when useful.
+
+#### When to use a comparison table
+
+Use a **comparison table** in Description (or Resolution intro) when the appointment explains **two or more similar things that customers mix up** — not for every fact list.
+
+| Trigger (appointment or notes mention…) | Table columns (examples) |
+|----------------------------------------|--------------------------|
+| **A vs B** behavior ("with X" vs "without X", "when enabled" vs "when disabled") | Concept A \| Concept B \| Key difference |
+| **Domain / setting on vs off** | Setting state \| Resulting behavior |
+| **Integration or config type** (Connector vs EIB vs Studio vs RaaS) | Type \| Output \| Compliance / notes |
+| **Scenario matrix** (same effective date vs different date) | Scenario \| Inputs \| Expected result |
+| **Frequency / timing variants** (monthly vs annual grade profile) | Variant \| Underlying data \| What configuration allows |
+
+**Do not** use a comparison table for:
+- A single root cause with no paired alternative
+- Resolution steps (use step express or bullets)
+- Related Categories metadata in the draft file
+
+**Mandatory layout** — prose first, then **one blank line**, then the table:
+
+```markdown
+One or two sentences naming both concepts and why they are confused.
+
+| Column A | Column B |
+|----------|----------|
+| Row 1    | Row 1    |
+```
+
+**Bad** (no blank line — prose runs into the table in Salesforce):
+
+```markdown
+The grade profile frequency determines whether TBP is monthly or annual.
+| Monthly | Monthly | No |
+```
+
+**Good**:
+
+```markdown
+The grade profile frequency determines whether TBP is monthly or annual.
+
+| Grade profile frequency | TBP frequency | Configurable Compensation Basis annualizes monthly TBP? |
+|---|---|---|
+| Monthly | Monthly | **No** |
+| Annual | Annual | **Yes** |
+```
+
+**Before finishing Description**, scan for paired concepts. If you wrote "when X … but when Y" or compared two settings, confirm you added a table with a blank line above it.
+
+**Step 5 HTML** — `mdToHtml()` adds spacing automatically, but if you hand-write HTML use `<p><br></p>` before the table and `margin-top: 16px` on `<table>` (see [salesforce-writes.md](salesforce-writes.md#html-tables)).
 
 ### Resolution
 

@@ -28,56 +28,65 @@ git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.cursor/skills/a
 
 ### 2. Install Playwright MCP
 
-This skill drives Salesforce through the browser via [Playwright MCP](https://github.com/microsoft/playwright-mcp). You need Node.js **18+** and an MCP client (Cursor, Claude Code, etc.).
+This skill opens Salesforce in a real browser via [Playwright MCP](https://github.com/microsoft/playwright-mcp). You do **not** need to edit config files or run terminal commands yourself — **ask your AI agent to install it**.
 
-#### Cursor
+#### Easiest way (recommended)
 
-**Option A — Settings UI**
+1. Open a **new chat** in Cursor or Claude Code.
+2. Paste one of these prompts:
 
-1. Open **Cursor Settings** → **MCP** → **Add new MCP Server**
-2. Type: `command`
-3. Command: `npx @playwright/mcp@latest`
-4. Save and confirm the server shows as connected (green)
+   ```
+   Install the Playwright MCP server for me
+   ```
 
-**Option B — `~/.cursor/mcp.json`**
+   ```
+   Set up Playwright MCP so I can create Knowledge Articles from Salesforce appointments
+   ```
 
-Create or edit `~/.cursor/mcp.json`:
+3. **Approve** what the agent asks for (editing `mcp.json`, running `npx`, or opening Cursor Settings).
+4. If the agent says to **restart Cursor** or **reload MCP servers**, do that once.
+5. On the **first KA run**, a browser window opens — **log into Workday Salesforce** (SSO/MFA). That login is saved for later runs.
+
+> **Important:** Use **Playwright MCP** (`playwright` / `user-playwright`), not Cursor's built-in browser MCP. This skill needs Playwright-specific tools like `browser_run_code_unsafe`.
+
+#### Check it worked
+
+Ask the agent:
+
+```
+Is Playwright MCP connected? What browser tools do you have?
+```
+
+You should hear tools like `browser_navigate`, `browser_snapshot`, and `browser_run_code_unsafe`. In **Cursor Settings → MCP**, the Playwright server should show as **connected** (green).
+
+#### Manual setup (optional)
+
+Use this only if the agent cannot edit your machine (locked-down laptop, etc.). You need **Node.js 18+**.
+
+**Cursor** — **Settings → MCP → Add new MCP Server**: type `command`, command `npx @playwright/mcp@latest`, save, reload MCP.
+
+Or add to `~/.cursor/mcp.json`:
 
 ```json
 {
   "mcpServers": {
     "playwright": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@playwright/mcp@latest"
-      ]
+      "args": ["-y", "@playwright/mcp@latest"]
     }
   }
 }
 ```
 
-Restart Cursor or reload MCP servers after saving.
-
-On first run, `npx` downloads `@playwright/mcp` and Playwright browser binaries automatically.
-
-#### Claude Code
+**Claude Code:**
 
 ```bash
 claude mcp add playwright npx @playwright/mcp@latest
 ```
 
-#### Verify
+On first run, `npx` downloads Playwright and browser binaries automatically.
 
-In your agent chat, Playwright MCP tools should be available — for example `browser_navigate`, `browser_snapshot`, and `browser_run_code_unsafe`. The server name is usually `playwright` or `user-playwright`.
-
-#### Log into Salesforce
-
-The first time you run the workflow, the agent opens a browser window. Log into Workday Salesforce manually if prompted (SSO/MFA). The session persists in Playwright's default profile for later runs.
-
-> **Note:** Use **Playwright MCP**, not Cursor's built-in browser MCP. This skill relies on `browser_run_code_unsafe` and other Playwright-specific tools.
-
-See [Headless mode](#headless-mode) to hide the browser window, and [Playwright MCP configuration](https://playwright.dev/mcp/configuration/options) for all options.
+See [Headless mode](#headless-mode) to hide the browser window (ask the agent: *"Enable headless mode for Playwright MCP"*), and [Playwright MCP configuration](https://playwright.dev/mcp/configuration/options) for all options.
 
 ## Usage
 
@@ -177,9 +186,17 @@ The skill is mostly markdown instructions for the agent, but a few small Node mo
 
 ## Headless mode
 
-By default, Playwright MCP launches a **visible** browser so you can watch the agent work. To run the workflow without showing browser windows, enable headless mode in your MCP config.
+By default, Playwright MCP opens a **visible** browser so you can watch the agent and log into Salesforce.
 
-### Cursor (`~/.cursor/mcp.json`)
+**Easiest:** ask your agent:
+
+```
+Enable headless mode for Playwright MCP
+```
+
+The agent will update your MCP config. You still need a saved Salesforce login (log in once in headed mode first, or use a persistent profile — see below).
+
+### Manual — Cursor (`~/.cursor/mcp.json`)
 
 ```json
 {
@@ -206,7 +223,7 @@ Or set the environment variable:
 
 Restart Cursor (or reload MCP servers) after changing this.
 
-### Claude Code
+### Manual — Claude Code
 
 **Option A — CLI** (recommended)
 

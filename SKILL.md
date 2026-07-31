@@ -103,7 +103,7 @@ Default template: **Knowledge Articles** (Description + Resolution, no separate 
 
 - **Generalize** when the resolution applies broadly; cite a specific integration or object as an example in the body, not the title
 - **Decide** whether Resolution items are sequential steps or parallel strategies based on the request — do not default to numbered steps
-- **Structure for scanability:** `###` headings + bullet lists in Resolution; avoid dense paragraphs (see drafting.md readability section)
+- **Structure for scanability:** `###` headings + bullet lists in Resolution; comparison tables for confused pairs in Description (see drafting.md)
 - **Optional — branching logic:** consider Mermaid activity/sequence/use-case diagrams when 3+ if/else paths would be hard to scan in prose (see [references/uml-diagrams.md](references/uml-diagrams.md))
 
 ```js

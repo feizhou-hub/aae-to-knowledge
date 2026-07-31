@@ -67,7 +67,15 @@ Embed screenshots: `<img src="data:image/png;base64,...">` — Salesforce rewrit
 
 ### HTML tables
 
-Leave visible space between the last paragraph and a comparison table so prose does not run into the table border. In markdown, use a blank line; in Salesforce HTML, insert `<p><br></p>` before the table **and** set `margin-top: 16px` on the `<table>` (TinyMCE often collapses blank `<p>` tags alone).
+Comparison tables separate **paired concepts** (A vs B, on vs off, scenario matrix). Draft rules and triggers: [drafting.md — When to use a comparison table](drafting.md#when-to-use-a-comparison-table).
+
+**Spacing (required)** — leave visible space between the last paragraph and a comparison table so prose does not run into the table border:
+
+| Format | Rule |
+|--------|------|
+| Markdown draft | **One blank line** between the intro paragraph and the `\|` table row |
+| Salesforce HTML | `<p><br></p>` before `<table>` **and** `margin-top: 16px` on `<table>` (TinyMCE often collapses blank `<p>` tags alone) |
+| `mdToHtml()` | Inserts spacing automatically when a table follows a paragraph — still add the blank line in markdown |
 
 ```html
 <p>Root cause explanation ending the prose block.</p>
