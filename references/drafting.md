@@ -64,7 +64,7 @@ Use a **comparison table** in Description (or Resolution intro) when the appoint
 - Resolution steps (use step express or bullets)
 - Related Categories metadata in the draft file
 
-**Mandatory layout** — prose first, then **one blank line**, then the table:
+**Mandatory layout** — prose first, then **one blank line**, then the table, then **one blank line** after the table before the next paragraph:
 
 ```markdown
 One or two sentences naming both concepts and why they are confused.
@@ -72,6 +72,8 @@ One or two sentences naming both concepts and why they are confused.
 | Column A | Column B |
 |----------|----------|
 | Row 1    | Row 1    |
+
+Prose that continues after the table.
 ```
 
 **Bad** (no blank line — prose runs into the table in Salesforce):
@@ -90,11 +92,26 @@ The grade profile frequency determines whether TBP is monthly or annual.
 |---|---|---|
 | Monthly | Monthly | **No** |
 | Annual | Annual | **Yes** |
+
+A Configurable Compensation Basis cannot annualize a monthly TBP amount.
 ```
 
-**Before finishing Description**, scan for paired concepts. If you wrote "when X … but when Y" or compared two settings, confirm you added a table with a blank line above it.
+**Before finishing Description**, scan for paired concepts. If you wrote "when X … but when Y" or compared two settings, confirm you added a table with a blank line **above and below** it.
 
-**Step 5 HTML** — `mdToHtml()` adds spacing automatically, but if you hand-write HTML use `<p><br></p>` before the table and `margin-top: 16px` on `<table>` (see [salesforce-writes.md](salesforce-writes.md#html-tables)).
+**Step 5 HTML** — `mdToHtml()` adds spacing automatically, but if you hand-write HTML use `<p><br></p>` + `margin-top: 16px` **before** the table, and `<p>&nbsp;</p>` + `margin-bottom: 16px` **after** it (see [salesforce-writes.md](salesforce-writes.md#html-tables)).
+
+#### Highlight the differing token
+
+When two values are **almost identical** — URL templates, OMS metadata, encoded payloads — and differ in **one segment**, do **not** put both full strings in one sentence. Readers miss `??` vs `?application/pdf?`.
+
+Put each variant on its own table row and **color the differing token**:
+
+| State | Token | Color |
+|-------|-------|-------|
+| Present / correct | the real value (for example `application/pdf`) | Green pill `#2e844a` on white text |
+| Missing / wrong | label the empty slot **missing** — do not leave `??` | Red pill `#c23934` on white text |
+
+Optional row tint: present `#eef8f1`, missing `#fdecea`. Markdown drafts may bold the token; Step 5 HTML must use the colored `<span>` pills in [salesforce-writes.md](salesforce-writes.md#html-tables).
 
 ### Resolution
 

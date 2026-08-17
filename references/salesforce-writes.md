@@ -69,18 +69,19 @@ Embed screenshots: `<img src="data:image/png;base64,...">` — Salesforce rewrit
 
 Comparison tables separate **paired concepts** (A vs B, on vs off, scenario matrix). Draft rules and triggers: [drafting.md — When to use a comparison table](drafting.md#when-to-use-a-comparison-table).
 
-**Spacing (required)** — leave visible space between the last paragraph and a comparison table so prose does not run into the table border:
+**Spacing (required)** — leave visible space **before and after** a comparison table so prose does not run into the table border:
 
 | Format | Rule |
 |--------|------|
-| Markdown draft | **One blank line** between the intro paragraph and the `\|` table row |
-| Salesforce HTML | `<p><br></p>` before `<table>` **and** `margin-top: 16px` on `<table>` (TinyMCE often collapses blank `<p>` tags alone) |
-| `mdToHtml()` | Inserts spacing automatically when a table follows a paragraph — still add the blank line in markdown |
+| Markdown draft | **One blank line** before the `\|` table row **and** one blank line after the last table row |
+| Salesforce HTML (before) | `<p><br></p>` before `<table>` **and** `margin-top: 16px` on `<table>` |
+| Salesforce HTML (after) | `margin-bottom: 16px` on `<table>` **and** `<p>&nbsp;</p>` immediately after `</table>` before the next paragraph. TinyMCE often collapses `<p><br></p>` after tables; `&nbsp;` survives Save |
+| `mdToHtml()` | Inserts before- and after-table spacing automatically — still add the blank lines in markdown |
 
 ```html
 <p>Root cause explanation ending the prose block.</p>
 <p><br></p>
-<table style="border-collapse: collapse; width: 100%; margin-top: 16px;" border="1" cellpadding="6" cellspacing="0">
+<table style="border-collapse: collapse; width: 100%; margin-top: 16px; margin-bottom: 16px;" border="1" cellpadding="6" cellspacing="0">
   <thead>
     <tr>
       <th style="background-color: #f3f3f3; text-align: left; border: 1px solid #d8dde6; padding: 8px;">Header</th>
@@ -92,7 +93,21 @@ Comparison tables separate **paired concepts** (A vs B, on vs off, scenario matr
     </tr>
   </tbody>
 </table>
+<p>&nbsp;</p>
+<p>Prose that continues after the table.</p>
 ```
+
+**Differing token (required when two strings are almost identical)** — color the one segment that changes. Do not dump both full strings in one sentence.
+
+```html
+<code>oms-attachments/{id}?{timestamp}?<span style="background-color:#2e844a;color:#ffffff;padding:2px 8px;border-radius:3px;font-weight:700;white-space:nowrap;">application/pdf</span>?resume.pdf</code>
+```
+
+```html
+<code>oms-attachments/{id}?{timestamp}?<span style="background-color:#c23934;color:#ffffff;padding:2px 8px;border-radius:3px;font-weight:700;white-space:nowrap;">missing</span>?resume.pdf</code>
+```
+
+Optional row tint: present `#eef8f1`, missing `#fdecea`. Label an empty delimiter slot **missing** (red) instead of `??`.
 
 ### Sequential steps in Resolution (step express HTML)
 
