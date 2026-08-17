@@ -29,11 +29,12 @@ Repeated Okta/SAML prompts usually mean competing Chrome processes on the same p
 | Do | Don't |
 |----|-------|
 | One Playwright MCP session per batch | `launchPersistentContext`, scratch Node Chrome, `browser_close`, or `pkill playwright-mcp` |
-| `browser_run_code_unsafe` + `salesforce-session.js` `ensureReady()` | Standalone `browser_navigate` when a script can reuse the current tab |
+| First action: `browser_navigate` to the Appointment URL (current tab) | Waiting on skill/script prep before any browser move |
+| `browser_run_code_unsafe` + `ensureReady()` for intake after the record is open | `browser_navigate` to `/lightning/page/home` or `/lightning/globalSearch/` |
 | Batch read/create up to **3 REQs** per session | Navigate to `/lightning/page/home` (scripts use Knowledge list fallback instead) |
 | Leave MCP running after login | Close the browser mid-batch |
 
-For bulk intake use `getMcpIntakeScript()` from `lib/salesforce-read.js` (Details + Questionnaire + Notes + Knowledge titles in one call).
+For bulk intake use `getMcpIntakeScript()` from `lib/salesforce-read.js` (Details + Notes + Knowledge titles in one call).
 
 ## Cleanup
 

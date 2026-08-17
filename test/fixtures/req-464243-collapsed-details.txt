@@ -1,0 +1,66 @@
+Ask an Expert Details
+Product Area
+Expenses
+Capability
+Expense Reporting & Analytics,Expense Submitter Experience
+Request
+REQ-464243
+Secondary Product Area
+Integration Management
+Secondary Capability
+Related ASK request(s)
+Request Submitted Date
+6/19/2026 11:28 AM
+Account
+Rakuten Group, Inc.
+Preview
+Primary NSC Contact
+Tominaga Masana
+Preview
+Primary NSC Email
+masana.tominaga@rakuten.com
+NSC Details
+Click to see NSC details
+Request Data Classification
+Help Request Data Classification
+Initial Complexity
+Medium
+Final Complexity
+Medium
+Related Product Support Case(s)
+Related Optimization Package Request(s)
+Time Spent
+4.00
+Status Details
+Status
+Closed
+Sub Status
+Completed Date
+6/26/2026
+Health Indicator
+Health Indicator Detail
+Created By
+Tominaga Masana
+Preview
+, 6/19/2026 11:28 AM
+Last Modified By
+Feizhou Li
+Preview
+, 7/1/2026 6:16 PM
+Internal Notes
+Expected Completion Date
+Internal Tracker
+Is Additional Related Request
+Help Is Additional Related Request
+False
+Is Additional Related Request
+Request Details
+Customer Details
+Tenant Details
+Assign Me As Consultant
+
+QL Details
+Consultant Details
+Meeting Details
+Cancellation Details
+Feedback Details

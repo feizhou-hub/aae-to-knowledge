@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "extractedAt": "2026-07-25",
+    "extractedAt": "2026-08-17",
     "source": "Salesforce Knowledge Related Categories picklists",
     "productLines": [
       "Adaptive Planning",
@@ -19,29 +19,29 @@
       "Workday VNDLY",
       "Workforce Management"
     ],
-    "notes": "Integration capabilities fully extracted. Other area capabilities use [] until refreshed via extract-matrix.js."
+    "notes": "Platform and Product Extensions areas refreshed 2026-08-17 from live picklist. There is no Product Area named Integration; appointment Product Area Integration Management maps to Knowledge Product Area Integration Management. Integration Management capabilities extracted. Other PPE area capabilities use [] until extracted."
   },
   "appointmentMappings": {
     "productArea": {
       "Integration Management": {
         "productLine": "Platform and Product Extensions",
-        "productArea": "Integration"
+        "productArea": "Integration Management"
       }
     },
     "capability": {
-      "Workday Web Services (WWS)": "SOAP",
-      "WWS": "SOAP",
+      "Workday Web Services (WWS)": "Workday Web Services (WWS)",
+      "WWS": "Workday Web Services (WWS)",
+      "SOAP": "Workday Web Services (WWS)",
       "REST API": "REST",
       "REST": "REST",
-      "Report-as-a-Service": "RaaS",
-      "RaaS": "RaaS",
-      "Workday Studio": "Studio",
-      "Studio": "Studio",
+      "Report-as-a-Service": "Raas",
+      "RaaS": "Raas",
+      "Raas": "Raas",
+      "General": "General",
+      "Security": "Security",
       "Enterprise Interface Builder": "Enterprise Interface Builder",
       "EIB": "Enterprise Interface Builder",
-      "BIRT": "BIRT",
-      "Document Transformation": "Document Transformation",
-      "Data Initialization Service": "Data Initialization Service"
+      "Document Transformation": "Document Transformation"
     }
   },
   "matrix": {
@@ -164,48 +164,49 @@
     "Platform and Product Extensions": {
       "Adoption": [],
       "Agent System of Record": [],
-      "Authentication": [],
+      "BIRT - FINS": [],
+      "BIRT - HCM": [],
       "BP Optimize Agent": [],
-      "Bring Your Own Key": [],
       "Business Process": [],
-      "Data Access (Configurable) Security": [],
+      "Data Access (Configurable) Security": ["Security Groups"],
       "Data Privacy Tools": [],
-      "Data Security": [],
       "Deployment Management": [],
       "Document Tools": [],
       "Drive": [],
-      "EU Sovereign Cloud": [],
       "Globalization": [],
       "Home Experience": [],
-      "Integration": [
-        "BIRT",
-        "Data Initialization Service",
+      "Integration Management": [
+        "Account Provisioning",
         "Document Transformation",
         "Enterprise Interface Builder",
+        "General",
         "REST",
-        "RaaS",
-        "SOAP",
-        "Studio"
+        "Raas",
+        "Security",
+        "Workday Web Services (WWS)"
       ],
-      "Media Cloud": [],
       "Messaging": [],
       "Mobile Applications": [],
-      "My Tasks": [],
       "Notifications and Alerts": [],
+      "Orchestrate for Integrations - FINS": [],
+      "Orchestrate for Integrations - HCM": [],
       "Organizations": [],
       "Sana Core Platform": [],
-      "Sana Enterprise Connectors and Tools": [],
-      "Sana Enterprise Platform": [],
+      "Security - Absence": [],
+      "Security - Compensation": [],
+      "Security - FINS": [],
+      "Security - Integrations": [],
+      "Security - Learning": [],
+      "Security - Talent Acquisition": [],
+      "Security - Talent Management": [],
+      "Security - Time Tracking": [],
+      "Security - Workday Payroll": [],
       "Self-Service Agent": [],
       "User Experience": [],
-      "Workday AI": [],
       "Workday Assistant": [],
-      "Workday Data Cloud Core": [],
-      "Workday Data Cloud Professional": [],
       "Workday Everywhere": [],
-      "Workday Extend": [],
-      "Workday Extend Essentials": [],
-      "Workday Extend Professional": []
+      "Workday Studio - FINS": [],
+      "Workday Studio - HCM": []
     },
     "Spend Management": {
       "Inventory": [],

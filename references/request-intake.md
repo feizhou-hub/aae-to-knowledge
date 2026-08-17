@@ -1,5 +1,14 @@
 # Request Intake (Steps 1–3)
 
+## Show the appointment first
+
+On the first tool batch of a “create a KA” turn, open the source record in Playwright MCP so the user sees the headed browser move:
+
+- **Appointment URL** — `browser_navigate` to that Lightning record immediately (reuse the current tab). Parallel with reading this file is OK; delaying until an intake script exists is not.
+- **REQ id only** — search/open the appointment as the first browser action; then pass `__kaAppointmentUrls` into `getMcpIntakeScript` once the URL is known.
+
+Do not navigate to `/lightning/page/home`. After the record is on screen, continue with `getMcpIntakeScript` as usual.
+
 ## Multiple requests (batch read)
 
 Hard limit: **3 REQ ids per `browser_run_code_unsafe` call**. `getMcpIntakeScript()` uses `.slice(0, 3)` — ids beyond the third are **silently dropped** unless you chunk the list and run another batch in a follow-up turn.
@@ -11,7 +20,7 @@ Read all appointments in **one** `browser_run_code_unsafe` call — do not open 
 ```js
 const { getMcpIntakeScript } = require('./lib');
 
-// One MCP call: Details + Questionnaire + Notes + Knowledge duplicate titles
+// One MCP call: Details + Notes + Knowledge duplicate titles
 // Optional: globalThis.__kaSearchQuery = 'Put Candidate Attachment MIME type'
 // Optional: globalThis.__kaAppointmentUrls = { 'REQ-238778': 'https://workday.lightning.force.com/lightning/r/Appointment__c/...' }
 getMcpIntakeScript(['REQ-238778', 'REQ-241220', 'REQ-298710']);
@@ -25,11 +34,13 @@ Split the user's list into chunks of 3. Process chunk 1 (Steps 1–4), present d
 
 ## Reading the request
 
-`getMcpIntakeScript` opens **Details**, **Questionnaire**, and **Notes** and returns structured fields (`recordType`, `productArea`, `capability`, `questionnaire`, `publicNotes`). Use those first; only snapshot a tab if a field is missing.
+`getMcpIntakeScript` opens **Details** and **Notes** and returns structured fields (`recordType`, `productArea`, `capability`, `publicNotes`). Use those first; only snapshot a tab if a field is missing. Do **not** open the **Questionnaire** tab.
 
-- Record Type (e.g. "Ask an Expert") → maps to Target WSP Service in Step 5
+- Record Type (e.g. "Ask an Expert") → maps to Target WSP Service in Step 5. It lives on the **highlights panel**, not the Details tabpanel.
 - Product Area and Capability → Related Categories in Step 5
-- Questionnaire answers often hold the integration name when Details has no Subject
+- Subject and the customer write-up live in the collapsed **Request Details** accordion. The write-up field is labeled **Details**, not Description. Intake expands that section and parses it with `parseRequestDetails()` so it does not pick up **Ask an Expert Details**.
+
+If Subject is missing after intake, the accordion was still collapsed — do not draft from Product Area/Capability alone.
 
 ### Notes tab
 
@@ -37,6 +48,8 @@ The Notes related list has a **Private** column with a checkbox per row.
 
 - **Unchecked** = public, customer-visible → use these
 - **Checked** = internal-only → skip unless user asks for internal context
+
+The related list often shows **Loading** / **No records to display** for several seconds after the tab is visible. Intake polls until `Created By:` appears (or 15s). Do not treat that placeholder as an empty appointment. If notes still look like a loading placeholder, wait and re-read — do not search Knowledge from Product Area/Capability words alone.
 
 Reconstruct chronologically (list is usually newest-first): what was reported, tried, root cause, resolution.
 

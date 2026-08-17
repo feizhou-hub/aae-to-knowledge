@@ -116,7 +116,7 @@ Other phrasing works too — `draft a KA`, `summarize this request as a knowledg
 
 | Turn | You | Agent |
 |------|-----|-------|
-| 1 | Ask to create a KA (examples above) | Reads the appointment, checks duplicates, saves `draft-REQ-######.md`, **stops and shows you the draft** |
+| 1 | Ask to create a KA (examples above) | **Immediately opens the appointment in the headed Playwright window**, then reads Details/Notes, checks duplicates, saves `draft-REQ-######.md`, **stops and shows you the draft** |
 | 2 | Review the draft. Reply **approved**, **looks good**, **go ahead**, or **create it in Salesforce** | Creates the Salesforce draft article and returns the draft URL |
 
 On turn 1 the agent **never** saves to Salesforce — that is intentional ([review gate](AGENTS.md)). Request edits on turn 2 if the draft needs changes before approving.
@@ -138,7 +138,7 @@ Draft a KA from this AAE request: REQ-442467
 ### Tips
 
 - **Open a project folder as your workspace** so `draft-REQ-######.md` and the review-gate state are saved locally (the cloned skill directory works fine).
-- **Stay logged in** to Workday Salesforce in the Playwright browser (see [Log into Salesforce](#log-into-salesforce)).
+- **Stay logged in** to Workday Salesforce in the Playwright browser (see [Log into Salesforce](#log-into-salesforce)). You should see that window jump to the appointment as soon as you paste the link — that is intake starting, not a Salesforce write.
 - If a **duplicate article** already exists, the agent reports it and stops instead of drafting.
 - The agent **generalizes** customer-specific details — do not expect tenant names or case IDs in the article body.
 

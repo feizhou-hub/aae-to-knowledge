@@ -53,9 +53,10 @@ Repeated Okta login prompts happen when agents fight over the Chrome profile. **
 | Do | Don't |
 |----|-------|
 | Playwright MCP (`user-playwright`) only | `launchPersistentContext`, `.scratch-fetch-reqs.mjs`, or any second Chrome |
-| `getMcpIntakeScript()` for Steps 1–3 | `pkill playwright-mcp`, `browser_close`, or a second Chrome |
+| **First action:** `browser_navigate` to the Appointment URL (or search-open the REQ) so the headed window shows the record | Waiting to generate intake scripts before any browser move |
+| `getMcpIntakeScript()` for Steps 1–3 after the record is on screen | `pkill playwright-mcp`, `browser_close`, or a second Chrome |
 | Batch up to **3 REQ ids** per session | `browser_navigate` to `/lightning/page/home` (use current tab or Knowledge list) |
-| `browser_run_code_unsafe` with `salesforce-session.js` helpers | Standalone `browser_navigate` when a script can continue the same tab |
+| `browser_run_code_unsafe` with `salesforce-session.js` helpers for intake/search/writes | Standalone `browser_navigate` to home, globalSearch, or Knowledge__kav/new |
 | Leave MCP running after login | `--headless` MCP (login/MFA won't stick visibly) |
 
 MCP profile (persistent): `~/Library/Caches/ms-playwright-mcp/workday-salesforce`
@@ -80,7 +81,7 @@ resolveCategories(appointmentProductArea, appointmentCapability, productCategory
 
 ## Attachments tab (optional — user request only)
 
-**Do not** open the **Attachments** tab as part of the standard intake. Default Steps 1–3 use **Details**, **Questionnaire**, and public **Notes**.
+**Do not** open the **Attachments** tab as part of the standard intake. Default Steps 1–3 use **Details** and public **Notes**. Do not open the **Questionnaire** tab.
 
 Open **Attachments** only when the user explicitly asks (e.g. "check attachments", "attachments tab", "review the files"). That step is slow (extra navigation, image fetch, embed) and is not required for most requests.
 

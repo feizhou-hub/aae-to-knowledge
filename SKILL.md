@@ -28,13 +28,26 @@ Browser-only workflow (Playwright MCP). WSP consultants use the Salesforce UI, n
 - User logged into Salesforce in the driven browser; if login page appears, wait for user confirmation
 - **One MCP browser session** — do not launch a second Chrome or `pkill playwright-mcp` mid-workflow (see [AGENTS.md](AGENTS.md#salesforce-browser-session-mandatory))
 
+## Show the browser immediately (mandatory)
+
+The headed Playwright window is how the user knows intake started. **Open the appointment in the first tool batch of the turn** — same message as “using AAE-to-knowledge” — do not wait until drafting.md, category-resolver, or the intake script are ready.
+
+| User gave | First Playwright action |
+|-----------|-------------------------|
+| Appointment URL (`…/Appointment__c/…/view`) | `browser_navigate` to that exact URL (current tab) |
+| REQ-###### only | Short search/`browser_run_code_unsafe` that opens the appointment |
+
+You **may** read SKILL.md / request-intake.md **in parallel** with that navigate. You **may not** finish reading drafting, generating `.scratch-*.js`, or resolving categories *before* the browser has been sent to the record.
+
+Then continue Steps 1–3 on that tab (`getMcpIntakeScript` + `__kaAppointmentUrls` when the URL is known). Never `browser_navigate` to `/lightning/page/home`.
+
 ## Multiple requests (bulk)
 
 Hard limit: **3 REQ ids per Playwright MCP session** (reads and writes). `getMcpIntakeScript()` only accepts the first 3 ids — it does **not** auto-chunk longer lists.
 
 ### 2–3 REQ ids in one turn
 
-1. **Steps 1–3** — one `getMcpIntakeScript` call (Details + Questionnaire + Notes + Knowledge titles; no home navigation between appointments)
+1. **Steps 1–3** — one `getMcpIntakeScript` call (Details + Notes + Knowledge titles; no home navigation between appointments)
 2. **Step 4** — save each `draft-REQ-######.md`, `registerDraft()` each, present all drafts, **STOP**
 3. **Step 5** (after approval) — one MCP session; create up to **3 articles** per batch script
 
@@ -79,7 +92,7 @@ Rules for every batch:
 
 ### Step 1 — Read the request
 
-Run **one** intake script (`getMcpIntakeScript`) for Details + Questionnaire + public Notes. Do not snapshot each tab separately. Reconstruct notes chronologically (list is usually newest-first). Read every public note fully — resolution may be in a different note than the root-cause diagnosis.
+**First:** send the headed browser to the appointment (see [Show the browser immediately](#show-the-browser-immediately-mandatory)). **Then** run **one** intake script (`getMcpIntakeScript`) for Details + public Notes. Do not open the Questionnaire tab. Do not snapshot each tab separately. Reconstruct notes chronologically (list is usually newest-first). Read every public note fully — resolution may be in a different note than the root-cause diagnosis.
 
 → Full guidance: [references/request-intake.md](references/request-intake.md)
 

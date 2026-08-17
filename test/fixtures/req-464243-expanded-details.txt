@@ -1,0 +1,97 @@
+Ask an Expert Details
+Product Area
+Expenses
+Capability
+Expense Reporting & Analytics,Expense Submitter Experience
+Request
+REQ-464243
+Secondary Product Area
+Integration Management
+Secondary Capability
+Related ASK request(s)
+Request Submitted Date
+6/19/2026 11:28 AM
+Account
+Rakuten Group, Inc.
+Preview
+Primary NSC Contact
+Tominaga Masana
+Preview
+Primary NSC Email
+masana.tominaga@rakuten.com
+NSC Details
+Click to see NSC details
+Request Data Classification
+Help Request Data Classification
+Initial Complexity
+Medium
+Final Complexity
+Medium
+Related Product Support Case(s)
+Related Optimization Package Request(s)
+Time Spent
+4.00
+Status Details
+Status
+Closed
+Sub Status
+Completed Date
+6/26/2026
+Health Indicator
+Health Indicator Detail
+Created By
+Tominaga Masana
+Preview
+, 6/19/2026 11:28 AM
+Last Modified By
+Feizhou Li
+Preview
+, 7/1/2026 6:16 PM
+Internal Notes
+Expected Completion Date
+Internal Tracker
+Is Additional Related Request
+Help Is Additional Related Request
+False
+Is Additional Related Request
+Request Details
+Subject
+Inquiry regarding setting the "Position" field via submit_expense_report API
+Details
+
+Hi Workday suppor team
+
+I am working on integrating our system with Workday using the submit_expense_report Web Service API.
+
+
+
+I have a question regarding the "Position" field in the expense report. I need to specify this field via the API, as the selected position directly impacts the Business Process routing.
+
+
+
+
+
+I have reviewed the API reference documentation below, but I could not find the specific field or parameter to map the Position:
+
+https://community.workday.com/sites/default/files/file-hosting/productionapi/Resource_Management/v46.0/Submit_Expense_Report.html#Expense_Report_Line_WWS_DataType(opens in a new tab)
+
+
+
+Could you please advise on how to correctly specify the "Position" in the Expense_Report_WWS_DataType? If there is a specific field or an alternative approach to set the position for the report, please let me know.
+
+
+
+Thank you for your assistance.
+
+
+
+Best regards,
+Customer Details
+Tenant Details
+Assign Me As Consultant
+
+QL Details
+Consultant Details
+Meeting Details
+Cancellation Details
+Feedback Details
