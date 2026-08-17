@@ -3,14 +3,22 @@
 **Only after user approval** in a follow-up message. Use `lib/salesforce-write.js` via `require('./lib')`.
 
 ```js
-const { markApproved, markCreated, getMcpSetRichTextScript, getMcpFillScript, resolveCategories, productCategoryMatrix } = require('./lib');
+const { markApproved, markCreated, getMcpCreateArticleScript, resolveCategories, productCategoryMatrix } = require('./lib');
 
 markApproved('REQ-######');
+globalThis.__kaArticle = {
+  title,
+  urlName,
+  targetWspService: 'Ask an Expert',
+  richText: { description, resolution, internalNotes },
+  categories: resolveCategories(productArea, capability, productCategoryMatrix),
+};
+// Pass getMcpCreateArticleScript('REQ-######') to browser_run_code_unsafe
 ```
 
 ## Speed: batch Playwright, don't snapshot per field
 
-Drive the form in one `browser_run_code_unsafe` script with native locators (`page.getByRole`, `page.getByLabel`). Locators auto-wait. Only snapshot at checkpoints (after fill, after Save).
+Drive the form in **one** `getMcpCreateArticleScript(reqId)` call (New Article → TinyMCE → Save → Related Categories). Locators auto-wait — do **not** add `waitForTimeout(8000)` after Save. Only snapshot at checkpoints if something fails.
 
 Template picker defaults to Knowledge Articles — click **Next** without snapshotting.
 

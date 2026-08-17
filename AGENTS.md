@@ -22,6 +22,8 @@ const {
   markCreated,
   getMcpSetRichTextScript,
   getMcpFillScript,
+  getMcpCreateArticleScript,
+  getMcpIntakeScript,
   getMcpKnowledgeSearchScript,
   resolveCategories,
   productCategoryMatrix,
@@ -51,7 +53,7 @@ Repeated Okta login prompts happen when agents fight over the Chrome profile. **
 | Do | Don't |
 |----|-------|
 | Playwright MCP (`user-playwright`) only | `launchPersistentContext`, `.scratch-fetch-reqs.mjs`, or any second Chrome |
-| `getMcpReadAppointmentBatchScript()` for Steps 1–3 | `pkill playwright-mcp`, `browser_close`, or a second Chrome |
+| `getMcpIntakeScript()` for Steps 1–3 | `pkill playwright-mcp`, `browser_close`, or a second Chrome |
 | Batch up to **3 REQ ids** per session | `browser_navigate` to `/lightning/page/home` (use current tab or Knowledge list) |
 | `browser_run_code_unsafe` with `salesforce-session.js` helpers | Standalone `browser_navigate` when a script can continue the same tab |
 | Leave MCP running after login | `--headless` MCP (login/MFA won't stick visibly) |
@@ -59,8 +61,8 @@ Repeated Okta login prompts happen when agents fight over the Chrome profile. **
 MCP profile (persistent): `~/Library/Caches/ms-playwright-mcp/workday-salesforce`
 
 ```javascript
-const { getMcpReadAppointmentBatchScript } = require('./lib');
-// Pass getMcpReadAppointmentBatchScript(['REQ-238778', 'REQ-241220']) to browser_run_code_unsafe
+const { getMcpIntakeScript } = require('./lib');
+// Pass getMcpIntakeScript(['REQ-238778', 'REQ-241220']) to browser_run_code_unsafe
 ```
 
 If MCP shows **Not connected**: Cursor Settings → MCP → Playwright → Restart. Log in once in the headed browser window, then continue.
@@ -78,13 +80,15 @@ resolveCategories(appointmentProductArea, appointmentCapability, productCategory
 
 ## Attachments tab (optional — user request only)
 
-**Do not** open the **Attachments** tab as part of the standard intake. Default Steps 1–3 use **Details** and public **Notes** only.
+**Do not** open the **Attachments** tab as part of the standard intake. Default Steps 1–3 use **Details**, **Questionnaire**, and public **Notes**.
 
 Open **Attachments** only when the user explicitly asks (e.g. "check attachments", "attachments tab", "review the files"). That step is slow (extra navigation, image fetch, embed) and is not required for most requests.
 
 Inline screenshots in **Notes** are separate: follow [SKILL.md](SKILL.md) Step 2 only when a note references pasted images.
 
 ## Duplicate check (Step 3)
+
+Intake already returns Knowledge **titles** (`duplicateCheck.articles`). Compare titles first. Never click the exact-name **Knowledge** app nav link.
 
 **Never** `browser_navigate` to `/lightning/globalSearch/...` — that URL does not exist and shows **"Page doesn't exist"**.
 

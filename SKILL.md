@@ -30,17 +30,17 @@ Browser-only workflow (Playwright MCP). WSP consultants use the Salesforce UI, n
 
 ## Multiple requests (bulk)
 
-Hard limit: **3 REQ ids per Playwright MCP session** (reads and writes). `getMcpReadAppointmentBatchScript()` only accepts the first 3 ids — it does **not** auto-chunk longer lists.
+Hard limit: **3 REQ ids per Playwright MCP session** (reads and writes). `getMcpIntakeScript()` only accepts the first 3 ids — it does **not** auto-chunk longer lists.
 
 ### 2–3 REQ ids in one turn
 
-1. **Steps 1–3** — one `browser_run_code_unsafe` batch read (no home navigation between appointments)
+1. **Steps 1–3** — one `getMcpIntakeScript` call (Details + Questionnaire + Notes + Knowledge titles; no home navigation between appointments)
 2. **Step 4** — save each `draft-REQ-######.md`, `registerDraft()` each, present all drafts, **STOP**
 3. **Step 5** (after approval) — one MCP session; create up to **3 articles** per batch script
 
 ```js
-const { getMcpReadAppointmentBatchScript } = require('./lib');
-// Pass getMcpReadAppointmentBatchScript(['REQ-238778', 'REQ-241220']) to browser_run_code_unsafe
+const { getMcpIntakeScript } = require('./lib');
+// Pass getMcpIntakeScript(['REQ-238778', 'REQ-241220']) to browser_run_code_unsafe
 ```
 
 ### More than 3 REQ ids
@@ -79,7 +79,7 @@ Rules for every batch:
 
 ### Step 1 — Read the request
 
-Navigate to the appointment. Capture from **Details**: Subject, description, Record Type, Product Area, Capability. Open **Notes**; use only rows where **Private** is unchecked. Reconstruct chronologically (list is usually newest-first). Read every public note fully — resolution may be in a different note than the root-cause diagnosis.
+Run **one** intake script (`getMcpIntakeScript`) for Details + Questionnaire + public Notes. Do not snapshot each tab separately. Reconstruct notes chronologically (list is usually newest-first). Read every public note fully — resolution may be in a different note than the root-cause diagnosis.
 
 → Full guidance: [references/request-intake.md](references/request-intake.md)
 
@@ -93,7 +93,7 @@ Only if a note references pasted **inline** screenshots. Inline images live in s
 
 ### Step 3 — Duplicate check
 
-Search Salesforce for core technical terms (not customer names). If a Published/Validated article covers the same root cause and resolution, stop and report it.
+`getMcpIntakeScript` runs Knowledge search in the same MCP call (override with `globalThis.__kaSearchQuery`). Compare returned **titles** first; only open an article if a title matches the same root cause. Never click the exact-name **Knowledge** app nav link.
 
 → Full guidance: [references/request-intake.md](references/request-intake.md#duplicate-check)
 

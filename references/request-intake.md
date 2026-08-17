@@ -2,32 +2,34 @@
 
 ## Multiple requests (batch read)
 
-Hard limit: **3 REQ ids per `browser_run_code_unsafe` call**. `getMcpReadAppointmentBatchScript()` uses `.slice(0, 3)` — ids beyond the third are **silently dropped** unless you chunk the list and run another batch in a follow-up turn.
+Hard limit: **3 REQ ids per `browser_run_code_unsafe` call**. `getMcpIntakeScript()` uses `.slice(0, 3)` — ids beyond the third are **silently dropped** unless you chunk the list and run another batch in a follow-up turn.
 
 ### 2–3 REQ ids
 
 Read all appointments in **one** `browser_run_code_unsafe` call — do not open a new browser or navigate to home between them.
 
 ```js
-const { getMcpReadAppointmentBatchScript } = require('./lib');
+const { getMcpIntakeScript } = require('./lib');
 
-// Pass to browser_run_code_unsafe — returns { batch, appointments, pageUrl }
-getMcpReadAppointmentBatchScript(['REQ-238778', 'REQ-241220', 'REQ-298710']);
+// One MCP call: Details + Questionnaire + Notes + Knowledge duplicate titles
+// Optional: globalThis.__kaSearchQuery = 'Put Candidate Attachment MIME type'
+// Optional: globalThis.__kaAppointmentUrls = { 'REQ-238778': 'https://workday.lightning.force.com/lightning/r/Appointment__c/...' }
+getMcpIntakeScript(['REQ-238778', 'REQ-241220', 'REQ-298710']);
 ```
 
-Then run Steps 2–4 **per REQ** (screenshots, duplicate check, local draft). Present all drafts before stopping for approval.
+Then run Steps 2–4 **per REQ** (screenshots only if notes mention inline images; local draft). Duplicate titles come back on `duplicateCheck.articles`. Present all drafts before stopping for approval.
 
 ### More than 3 REQ ids
 
-Split the user's list into chunks of 3. Process chunk 1 (Steps 1–4), present drafts, **STOP**. In a follow-up turn, process chunk 2, and so on. Do **not** pass all ids to `getMcpReadAppointmentBatchScript()` at once — only the current chunk (max 3).
+Split the user's list into chunks of 3. Process chunk 1 (Steps 1–4), present drafts, **STOP**. In a follow-up turn, process chunk 2, and so on. Do **not** pass all ids to `getMcpIntakeScript()` at once — only the current chunk (max 3).
 
 ## Reading the request
 
-Navigate to the appointment link. Snapshot **Details** (usually default tab):
+`getMcpIntakeScript` opens **Details**, **Questionnaire**, and **Notes** and returns structured fields (`recordType`, `productArea`, `capability`, `questionnaire`, `publicNotes`). Use those first; only snapshot a tab if a field is missing.
 
-- Subject and full Details/description text
 - Record Type (e.g. "Ask an Expert") → maps to Target WSP Service in Step 5
 - Product Area and Capability → Related Categories in Step 5
+- Questionnaire answers often hold the integration name when Details has no Subject
 
 ### Notes tab
 
@@ -84,18 +86,21 @@ Depends on audience (default: **Internal Audience Only**):
 
 ## Duplicate check
 
-Use global Salesforce search with core technical terms (integration name, error text, feature — not customer names). Compare top Knowledge results' Description/Resolution against your planned draft.
+Use global Salesforce search with core technical terms (integration name, error text, feature — not customer names). **Compare titles first** — only open an article if the title looks like the same root cause.
 
 **Do not** `browser_navigate` to `/lightning/globalSearch/<term>` — that path does not exist in Lightning and triggers a **"Page doesn't exist"** modal. Search via the Lightning search box instead.
+
+**Do not** click the exact-name **Knowledge** link in the app nav. That opens Recently Viewed, not search results. Click the search-results filter named like `Knowledge 5+`.
+
+Intake already searches in the same MCP call. To override the query or re-search:
 
 ```js
 const { getMcpKnowledgeSearchScript } = require('./lib');
 
 globalThis.__kaSearchQuery = 'Put Reference ID EIB load time';
 // Pass getMcpKnowledgeSearchScript() to browser_run_code_unsafe
+// Returns { query, url, articles: [{ title, url }] }
 ```
-
-Or manually: focus the visible `Search...` input → type query → Enter → click the **Knowledge** filter in results.
 
 If a **Published and Validated** article already covers the same root cause and resolution:
 
