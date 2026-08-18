@@ -90,42 +90,21 @@ See [Headless mode](#headless-mode) to hide the browser window (ask the agent: *
 
 ## Usage
 
-After [install](#install), open a new agent chat in Cursor or Claude Code and describe what you want in plain language. You do not need to run scripts yourself — the agent follows [SKILL.md](SKILL.md) and uses Playwright MCP to read Salesforce.
+After [install](#install), open a new agent chat in Cursor or Claude Code. You do not need to run scripts yourself — the agent follows [SKILL.md](SKILL.md) and uses Playwright MCP to read Salesforce.
 
-### Create a draft (Step 1 — paste one of these)
+Creating an article is **two turns**. Step 1 only writes a local markdown file. Step 2 writes to Salesforce **after you approve**.
 
-**By appointment URL** (from the browser address bar):
+### Step 1 — Create a local draft
 
-```
-Create a KA based on https://workday.lightning.force.com/lightning/r/Appointment__c/a0XVT00000XXXXXX/view
-```
+Paste one of these into the chat:
 
-**By request number**:
-
-```
-Create a KA for REQ-439659
-```
-
-```
-Make a knowledge article from appointment REQ-439659
-```
-
-Other phrasing works too — `draft a KA`, `summarize this request as a knowledge article`, or pasting the Salesforce link without extra context.
-
-### What happens next
-
-| Turn | You | Agent |
-|------|-----|-------|
-| 1 | Ask to create a KA (examples above) | **Immediately opens the appointment in the headed Playwright window**, then reads Details/Notes, checks duplicates, saves `draft-REQ-######.md`, **stops and shows you the draft** |
-| 2 | Review the draft. Reply **approved**, **looks good**, **go ahead**, or **create it in Salesforce** | Creates the Salesforce draft article and returns the draft URL |
-
-On turn 1 the agent **never** saves to Salesforce — that is intentional ([review gate](AGENTS.md)). Request edits on turn 2 if the draft needs changes before approving.
-
-### Examples
+**Appointment URL** (from the browser address bar):
 
 ```
 Create a KA based on https://workday.lightning.force.com/lightning/r/Appointment__c/a0XVT00000AbCdE/view
 ```
+
+**Request number:**
 
 ```
 Create a knowledge article for REQ-462722
@@ -135,10 +114,70 @@ Create a knowledge article for REQ-462722
 Draft a KA from this AAE request: REQ-442467
 ```
 
+Other phrasing works too — `make a KA`, `summarize this request as a knowledge article`, or pasting the Salesforce link with no extra text.
+
+The agent **immediately opens the appointment** in the headed Playwright window, then reads Details and Notes, checks for duplicates, saves `draft-REQ-######.md`, and **stops so you can review**. It does **not** save to Salesforce on this turn ([review gate](AGENTS.md)).
+
+### Step 2 — Review and approve
+
+Read the draft. Ask for edits if anything is wrong. When it looks right, reply with one of:
+
+```
+approved
+```
+
+```
+looks good
+```
+
+```
+create it in Salesforce
+```
+
+```
+go ahead
+```
+
+The agent then creates the Salesforce **draft** article (not published) and returns the URL.
+
+### Multiple requests (bulk)
+
+You can ask for several appointments in one message. The agent still **stops for review** before any Salesforce write. Approval can cover one draft or the whole batch.
+
+**Limit: 3 requests per batch.** Paste at most three REQ ids (or appointment URLs) at a time.
+
+```
+Create KAs for REQ-238778, REQ-241220, and REQ-293057
+```
+
+```
+Draft knowledge articles from these appointments:
+https://workday.lightning.force.com/lightning/r/Appointment__c/a0XVT00000AbCdE/view
+https://workday.lightning.force.com/lightning/r/Appointment__c/a0XVT00000FgHiJ/view
+```
+
+Same two turns as a single request:
+
+| Turn | You | Agent |
+|------|-----|-------|
+| 1 | Paste up to 3 REQ ids or URLs | Reads each appointment, saves each `draft-REQ-######.md`, **stops and shows all drafts** |
+| 2 | Reply **approved** (or name which ones to skip) | Creates those Salesforce drafts and returns the URLs |
+
+**More than 3:** split the list yourself, or paste the full list — the agent processes the first 3, then continues the rest after you approve (or in a follow-up). Example for five requests:
+
+| Turn | What happens |
+|------|----------------|
+| 1 | Draft REQs A, B, C → review |
+| 2 | You approve → Salesforce drafts for A, B, C |
+| 3 | Draft REQs D, E → review |
+| 4 | You approve → Salesforce drafts for D, E |
+
+Stay in the **same chat** and keep Playwright MCP connected. Do not close the Salesforce browser window between appointments in a batch.
+
 ### Tips
 
 - **Open a project folder as your workspace** so `draft-REQ-######.md` and the review-gate state are saved locally (the cloned skill directory works fine).
-- **Stay logged in** to Workday Salesforce in the Playwright browser (see [Log into Salesforce](#log-into-salesforce)). You should see that window jump to the appointment as soon as you paste the link — that is intake starting, not a Salesforce write.
+- **Stay logged in** to Workday Salesforce in the Playwright browser (see [Install](#2-install-playwright-mcp)). You should see that window jump to the appointment as soon as you paste the link — that is intake starting, not a Salesforce write.
 - If a **duplicate article** already exists, the agent reports it and stops instead of drafting.
 - The agent **generalizes** customer-specific details — do not expect tenant names or case IDs in the article body.
 
