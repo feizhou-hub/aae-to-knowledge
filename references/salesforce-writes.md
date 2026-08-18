@@ -2,6 +2,8 @@
 
 **Only after user approval** in a follow-up message. Use `lib/salesforce-write.js` via `require('./lib')`.
 
+Gated helpers (`getMcpSetRichTextScript(reqId)`, `getMcpCreateArticleScript(reqId)`) **throw** after `markCreated()` (`status: created`). For a user-requested **edit** of an existing draft article (embed a diagram, fix Description), use `set-rich-text-fields.js` / `fill-related-categories.js` **directly** — do not call the gated wrappers.
+
 ```js
 const { markApproved, markCreated, getMcpCreateArticleScript, resolveCategories, productCategoryMatrix } = require('./lib');
 
@@ -156,15 +158,16 @@ Repeat for each step. The dotted line must span from one circle to the next — 
 
 ### UML diagrams (optional — activity, sequence, use case)
 
-TinyMCE does **not** render Mermaid. When the approved draft includes a diagram, convert fenced ` ```mermaid ` blocks to HTML before setting `__kaRichTextFields`.
+TinyMCE does **not** render Mermaid. The local preview graphic will not appear in the KA unless you embed a **PNG**.
 
-| Draft (Mermaid) | Salesforce HTML |
-|-----------------|-------------------|
-| `flowchart TD` / `flowchart LR` | Bordered table with `→` arrows (activity rail) |
+| Draft (Mermaid) | Salesforce |
+|-----------------|------------|
+| `flowchart TD` / `flowchart LR` (visual) | Render PNG + `<img src="data:image/png;base64,...">` (rewrites to `rtaImage` on Save) |
+| `flowchart TD` / `flowchart LR` (table OK) | Bordered table with `→` arrows — **not** a substitute for the graphic |
 | `sequenceDiagram` | Step / From / To / Message table |
 | Use case (actors) | Actor / action comparison table |
 
-Templates and when to diagram: [uml-diagrams.md](uml-diagrams.md). Simple flowcharts can be auto-converted via `mdToHtml()` from `require('./lib')`.
+Templates, mermaid-cli command, and verify steps: [uml-diagrams.md](uml-diagrams.md). `mdToHtml()` only produces the table rail.
 
 ## Related Categories (mandatory — 3 levels)
 
@@ -179,10 +182,12 @@ globalThis.__kaArticleUrl = '<saved article url>';
 ```
 
 - Page opens with an empty first row — fill it, don't click New unless needed
-- If Capability has no exact matrix match, use the appointment capability name or closest semantic match
+- **Prefer the appointment Product Area/Capability when those strings exist on the live picklist.** `resolveCategories()` against a stale matrix can return **Workday Extend** or **Integration**, which are often **not** Product Area options. Live PPE areas include **Orchestrate for Integrations - HCM**, **Orchestrate for Integrations - FINS**, **Integration Management**, **Workday Studio - HCM**, etc.
+- If `getByRole('option', { name: productArea })` times out, read the open option list and pick the appointment value when it is there — do not invent a matrix synonym
+- If Capability has no exact matrix match, use the appointment capability name (including **General**) or closest semantic match
 - **Never** leave Product Capability blank when the appointment has a Capability — drafts must propose all 3 levels
 
-Mappings in `product-category-matrix.json` (e.g. Integration Management → Platform and Product Extensions / Integration).
+Mappings in `product-category-matrix.json`. Keep the project copy in sync with `lib/product-category-matrix.json` in this skill (PPE picklist refreshed 2026-08-17).
 
 ## Bulk creation (up to 3 per session)
 

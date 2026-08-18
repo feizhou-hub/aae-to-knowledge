@@ -72,7 +72,7 @@ Session helpers live in `lib/salesforce-session.js` (`ensureReady`, `fetchAttach
 
 ## Related Categories (mandatory — 3 levels)
 
-Always set **Product Line**, **Product Area**, and **Product Capability** from the appointment (or closest matrix match). Never save with only two levels unless the Salesforce picklist has no capability for that area (rare — note it in Internal Notes).
+Always set **Product Line**, **Product Area**, and **Product Capability** from the appointment (or closest matrix match). Prefer the **appointment Product Area string** when it appears on the live Related Categories picklist (for example **Orchestrate for Integrations - HCM**). Do not substitute **Workday Extend** or **Integration** — those names often are not picklist values. Never save with only two levels unless the Salesforce picklist has no capability for that area (rare — note it in Internal Notes).
 
 ```javascript
 const { resolveCategories, productCategoryMatrix } = require('./lib');

@@ -11,6 +11,16 @@ Do **not** use long `waitForTimeout(3000–8000)` sleeps. Wait for the next Ligh
 
 `settle(200)` is only for picklist animation after a click.
 
+## `browser_run_code_unsafe` contract
+
+MCP wraps the payload as a single function. Extra statements **before** `async (page) =>` cause `SyntaxError: Unexpected token ';'`.
+
+| Do | Don't |
+|----|-------|
+| One `async (page) => { ... }` — set `globalThis.__kaArticle` / `__kaSearchQuery` / `__kaAppointmentUrls` **inside** it | `globalThis.x = ...;` then `async (page) =>` in the same file |
+| Inline large HTML with `JSON.stringify` into the script file | `require('fs')` — `require` is not defined in the MCP runner |
+| Single-quoted locators: `page.locator('iframe[id$="_ifr"]')` | `"iframe[id$=\"_ifr"]"` (the quote closes the string early) |
+
 ## Navigation gotchas
 
 - **Invalid global search URLs** — never navigate to `/lightning/globalSearch/<term>`. Lightning has no such route; it shows **"Page doesn't exist — Enter a valid URL and try again"**. Use the header search box (or `salesforce-search.js` → `getMcpKnowledgeSearchScript()`) instead.

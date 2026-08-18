@@ -38,9 +38,9 @@ Split the user's list into chunks of 3. Process chunk 1 (Steps 1–4), present d
 
 - Record Type (e.g. "Ask an Expert") → maps to Target WSP Service in Step 5. It lives on the **highlights panel**, not the Details tabpanel.
 - Product Area and Capability → Related Categories in Step 5
-- Subject and the customer write-up live in the collapsed **Request Details** accordion. The write-up field is labeled **Details**, not Description. Intake expands that section and parses it with `parseRequestDetails()` so it does not pick up **Ask an Expert Details**.
+- Subject and the customer write-up live in the collapsed **Request Details** accordion. The write-up field is labeled **Details**, not Description. Intake expands that section and **polls until Subject appears** (same 15s pattern as Notes), then parses with `parseRequestDetails()` so it does not pick up **Ask an Expert Details**. Do not re-click the Details tab after expanding — that can reset the accordion.
 
-If Subject is missing after intake, the accordion was still collapsed — do not draft from Product Area/Capability alone.
+If Subject is still missing after intake, `aria-expanded="true"` can still mean an empty accordion. **Collapse then expand** Request Details and poll until `Subject` appears — do not draft from Product Area/Capability alone.
 
 ### Notes tab
 
@@ -99,11 +99,15 @@ Depends on audience (default: **Internal Audience Only**):
 
 ## Duplicate check
 
-Use global Salesforce search with core technical terms (integration name, error text, feature — not customer names). **Compare titles first** — only open an article if the title looks like the same root cause.
+Use global Salesforce search with core technical terms (integration name, error text, feature — not customer or consultant names). **Compare titles first** — only open an article if the title looks like the same root cause.
+
+If Subject was missing, intake’s auto-query often becomes `"General Orchestrate … <person names>"`. **Override** with the subject plus technical terms before trusting `duplicateCheck`.
 
 **Do not** `browser_navigate` to `/lightning/globalSearch/<term>` — that path does not exist in Lightning and triggers a **"Page doesn't exist"** modal. Search via the Lightning search box instead.
 
 **Do not** click the exact-name **Knowledge** link in the app nav. That opens Recently Viewed, not search results. Click the search-results filter named like `Knowledge 5+`.
+
+`a[href*="Knowledge__kav"]` on the search page also matches **workspace tab** links (open articles). Those are not hits. Read the **Search Results → Knowledge** section text (or click the Knowledge filter) before listing duplicates.
 
 Intake already searches in the same MCP call. To override the query or re-search:
 

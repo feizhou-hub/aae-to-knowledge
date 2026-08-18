@@ -2,14 +2,13 @@
 name: aae-to-knowledge
 description: >-
   Turns Workday WSP Salesforce appointments (Ask an Expert, REQ-###### links)
-  into Knowledge Article drafts via Playwright — no Salesforce API. Checks
-  duplicates, strips customer PII, saves a local markdown draft, and stops for
-  human approval before any Salesforce write. Use whenever the user pastes a
-  workday.lightning.force.com Appointment URL, asks to create/draft/summarize a
-  Knowledge Article from a request, or says "make a KA" — even on the first
-  message. "Create a KA" means local draft only; Salesforce writes require a
-  follow-up approval. Use the bundled approval-gate and salesforce-write helpers
-  in this skill folder.
+  into Knowledge Article drafts via Playwright — no Salesforce API. Use whenever
+  the user pastes a workday.lightning.force.com Appointment URL, asks to
+  create/draft/summarize a Knowledge Article from a request, or says "make a KA"
+  — even on the first message. Also use when a created KA is missing a visual
+  flowchart (TinyMCE does not render Mermaid), Related Categories picklist fill
+  fails, or Request Details Subject is empty after intake. "Create a KA" means
+  local draft only; Salesforce writes require a follow-up approval.
 ---
 
 # WSP Request → Knowledge Article
@@ -117,7 +116,7 @@ Default template: **Knowledge Articles** (Description + Resolution, no separate 
 - **Generalize** when the resolution applies broadly; cite a specific integration or object as an example in the body, not the title
 - **Decide** whether Resolution items are sequential steps or parallel strategies based on the request — do not default to numbered steps
 - **Structure for scanability:** `###` headings + bullet lists in Resolution; comparison tables for confused pairs in Description; color the differing token when two strings are almost identical (see drafting.md)
-- **Optional — branching logic:** consider Mermaid activity/sequence/use-case diagrams when 3+ if/else paths would be hard to scan in prose (see [references/uml-diagrams.md](references/uml-diagrams.md))
+- **Optional — branching logic:** Mermaid in the local draft when 3+ if/else paths would be hard to scan (see [references/uml-diagrams.md](references/uml-diagrams.md)). In Salesforce, activity flowcharts must be a **PNG embed** — `mdToHtml()` table conversion is not the graphic.
 
 ```js
 const { registerDraft } = require('./lib');
@@ -143,9 +142,9 @@ markApproved('REQ-######');
 markCreated('REQ-######', { articleUrl });
 ```
 
-Use `salesforce-write.js` (via `require('./lib')`, not the underlying modules directly) — it enforces the review gate.
+Use `salesforce-write.js` (via `require('./lib')`, not the underlying modules directly) — it enforces the review gate. After the article exists, gated helpers throw; post-create edits use the ungated modules (see salesforce-writes.md).
 
-→ Form fill, TinyMCE, categories, tables: [references/salesforce-writes.md](references/salesforce-writes.md)
+→ Form fill, TinyMCE, PNG diagrams, categories: [references/salesforce-writes.md](references/salesforce-writes.md)
 
 ## Deliverable
 

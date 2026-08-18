@@ -26,6 +26,14 @@
       "Integration Management": {
         "productLine": "Platform and Product Extensions",
         "productArea": "Integration Management"
+      },
+      "Orchestrate for Integrations - HCM": {
+        "productLine": "Platform and Product Extensions",
+        "productArea": "Orchestrate for Integrations - HCM"
+      },
+      "Orchestrate for Integrations - FINS": {
+        "productLine": "Platform and Product Extensions",
+        "productArea": "Orchestrate for Integrations - FINS"
       }
     },
     "capability": {
@@ -188,8 +196,8 @@
       "Messaging": [],
       "Mobile Applications": [],
       "Notifications and Alerts": [],
-      "Orchestrate for Integrations - FINS": [],
-      "Orchestrate for Integrations - HCM": [],
+      "Orchestrate for Integrations - FINS": ["General"],
+      "Orchestrate for Integrations - HCM": ["General"],
       "Organizations": [],
       "Sana Core Platform": [],
       "Security - Absence": [],

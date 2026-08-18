@@ -144,7 +144,7 @@ When the Resolution (or Description) has **three or more conditional paths** —
 | Request/response order between systems | Sequence (`sequenceDiagram`) | Description |
 | Who can perform an action | Use case table or small flowchart | Resolution |
 
-Write Mermaid in the local `draft-REQ-######.md`; convert to Salesforce HTML in Step 5. Full syntax, templates, and anti-patterns: [uml-diagrams.md](uml-diagrams.md).
+Write Mermaid in the local `draft-REQ-######.md`. In Step 5, render activity flowcharts to a **light PNG** and embed the image — TinyMCE will not show Mermaid, and `mdToHtml()` only produces a table. Full syntax and embed steps: [uml-diagrams.md](uml-diagrams.md).
 
 #### Resolution readability (rich text)
 

@@ -46,6 +46,7 @@ describe('parseRequestDetails (REQ-464243 fixtures)', () => {
     assert.equal(parsed.subject, null);
     assert.equal(parsed.description, null);
     assert.equal(detailsNeedExpand(collapsed), true);
+    assert.equal(detailsNeedExpand(''), true);
   });
 
   it('reads Subject and the Details body after expanding Request Details', () => {

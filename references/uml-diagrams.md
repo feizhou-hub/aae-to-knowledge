@@ -1,6 +1,8 @@
 # UML Diagrams in Knowledge Articles (optional)
 
-**Optional style** — use when prose or bullet lists would bury the reader in **if / else** branches, parallel paths, or back-and-forth message flows. Skip diagrams for simple fixes; prose, tables, and step express remain the default. Salesforce TinyMCE does **not** render Mermaid — write Mermaid in the local draft for review, then convert to the HTML patterns below in Step 5.
+**Optional style** — use when prose or bullet lists would bury the reader in **if / else** branches, parallel paths, or back-and-forth message flows. Skip diagrams for simple fixes; prose, tables, and step express remain the default.
+
+Salesforce TinyMCE does **not** render Mermaid. The local markdown preview (boxes, diamonds, arrows) is **not** what Save produces. For activity flowcharts the user should **see** in the KA, render a **PNG** and embed it (below). An HTML table with `→` is a fallback when a graphic is not needed — it is not the diagram.
 
 ## When to diagram (vs. prose or table)
 
@@ -113,11 +115,40 @@ stateDiagram-v2
 
 ---
 
-## Salesforce HTML (Step 5)
+## Salesforce (Step 5) — visual flowchart = PNG
 
-TinyMCE strips `<script>` and does not render Mermaid. Convert each diagram to HTML before `getMcpSetRichTextScript()`.
+`mdToHtml()` turns `flowchart TD/LR` into a **table rail**. That is not the Mermaid graphic. If the local draft showed a flowchart and the user expects that picture, **embed a PNG**. Do not ship the table and tell them it is the diagram.
 
-### Activity flowchart → HTML table rail
+| Draft | What to put in TinyMCE |
+|-------|------------------------|
+| Activity flowchart (`flowchart TD` / `LR`) the user reviewed as a graphic | **PNG** `<img>` (default) |
+| Sequence / state | HTML table (templates below) |
+| Two-way comparison with no branching | Comparison table only — no diagram |
+
+### Render a light PNG (not the Cursor dark preview)
+
+Do not paste the dark-mode markdown preview screenshot. Render a white-background PNG:
+
+```bash
+npx --yes @mermaid-js/mermaid-cli -i flow.mmd -o flow.png -b white -t default -s 2 -w 1400
+```
+
+Keep node labels short so they wrap cleanly. Save the PNG next to `draft-REQ-######.md` and reference it from the local draft (`![alt](flow.png)`).
+
+### Embed (Salesforce rewrites to `rtaImage` on Save)
+
+```html
+<p>Choose the configuration from the vendor contract:</p>
+<p><br></p>
+<p><img alt="Choose pagination type from the vendor next-page contract" src="data:image/png;base64,..." style="max-width: 100%; height: auto;" /></p>
+<p>&nbsp;</p>
+```
+
+Inline the data URI in the Playwright script with `JSON.stringify` (MCP `browser_run_code_unsafe` has **no** `require`). After Save, confirm a Description image whose `src` contains `servlet/rtaImage` and `naturalWidth > 0`.
+
+If the user asks why they cannot see the diagram: the table rail is already in the article — **replace it with the PNG** on Edit/Save. Do not stop at an explanation.
+
+### Activity flowchart → HTML table rail (fallback only)
 
 Use bordered cells, arrows (`→`), and indentation for branches. Leave `<p><br></p>` before the table.
 
@@ -194,13 +225,15 @@ Use the same styled comparison table as Description prose tables (`margin-top: 1
 ## Do not
 
 - Paste raw Mermaid into Salesforce HTML — it will show as plain text
+- Treat `mdToHtml()` table conversion as the visual flowchart the user approved
+- Embed the Cursor dark-theme Mermaid screenshot into a white KA
 - Diagram a simple 2-step fix — use step express instead
 - Mix a diagram **and** a duplicate prose version of every branch — caption + diagram + brief follow-up bullets for detail is enough
 - Use diagrams for customer-specific data (tenant names, file names) — generalize labels
 
 ## `mdToHtml()` helper
 
-`lib/md-to-ka-html.js` (exported via `require('./lib')`) auto-converts fenced ` ```mermaid ` flowcharts (TD/LR) to the HTML table rail format. Sequence and state diagrams still need manual HTML conversion using the templates above.
+`lib/md-to-ka-html.js` (exported via `require('./lib')`) auto-converts fenced ` ```mermaid ` flowcharts (TD/LR) to the HTML **table rail** only. Sequence and state diagrams still need manual HTML conversion using the templates above. For a graphic flowchart, skip `mdToHtml()` on that fence and embed a PNG instead.
 
 ```js
 const { mdToHtml } = require('./lib');
