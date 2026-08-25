@@ -12,21 +12,90 @@ Agent skill for turning Workday WSP Salesforce appointments (Ask an Expert, `REQ
 
 ## Install
 
-### 1. Clone this skill
+You do **not** need git. Get the skill, then install Playwright MCP. If you use the first prompt below, both steps happen in one chat.
 
-#### Claude Code
+### 1. Get the skill
+
+#### Ask the agent (no git — recommended)
+
+1. Open a **new chat** in Cursor or Claude Code.
+2. Paste this prompt:
+
+   ```
+   Install the aae-to-knowledge skill from https://github.com/feizhou-hub/aae-to-knowledge
+
+   Download the whole repository (not just SKILL.md) into:
+   - Cursor: ~/.cursor/skills/aae-to-knowledge
+   - Claude Code: ~/.claude/skills/aae-to-knowledge
+
+   Then install Playwright MCP so I can create Knowledge Articles from Salesforce appointments.
+   ```
+
+3. **Approve** what the agent asks for (downloading files, creating folders, editing MCP settings).
+4. When it finishes, **start a new chat** so the skill is picked up.
+5. On the **first KA run**, a browser window opens — **log into Workday Salesforce** (SSO/MFA). That login is saved for later runs.
+
+Do not send a link to `SKILL.md` alone. The agent needs the whole folder (`lib/`, `references/`, and `SKILL.md`).
+
+#### Download a ZIP (no git, no terminal)
+
+Use this if you would rather not ask the agent to download the skill.
+
+1. Open [github.com/feizhou-hub/aae-to-knowledge](https://github.com/feizhou-hub/aae-to-knowledge).
+2. Click the green **Code** button → **Download ZIP**.
+3. Unzip the file. You get a folder named `aae-to-knowledge-main` (or similar).
+4. Rename that folder to exactly `aae-to-knowledge`.
+5. Move it into your skills folder:
+
+   **Mac (Cursor):** In Finder, press **Shift-Command-G**, paste `~/.cursor/skills`, click **Go**, then drop the folder there.
+
+   **Mac (Claude Code):** Same, but paste `~/.claude/skills`.
+
+   **Windows (Cursor):** In File Explorer, paste `%USERPROFILE%\.cursor\skills` into the address bar and press Enter, then drop the folder there.
+
+   **Windows (Claude Code):** Use `%USERPROFILE%\.claude\skills`.
+
+If Finder or File Explorer says the folder does not exist, open a chat and ask:
+
+```
+Create the folder ~/.cursor/skills for me, then open it in Finder
+```
+
+(Use `~/.claude/skills` for Claude Code, or `%USERPROFILE%\.cursor\skills` on Windows.)
+
+The result must look like this (not a single `SKILL.md` file):
+
+```
+aae-to-knowledge/
+  SKILL.md
+  README.md
+  lib/
+  references/
+```
+
+Then continue with [Playwright MCP](#2-install-playwright-mcp) below. After both steps, **start a new chat**.
+
+#### Clone with git (optional)
+
+Only if you already use git:
+
+**Claude Code**
 
 ```bash
 git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.claude/skills/aae-to-knowledge
 ```
 
-#### Cursor
+**Cursor**
 
 ```bash
 git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.cursor/skills/aae-to-knowledge
 ```
 
+Then continue with Playwright MCP below.
+
 ### 2. Install Playwright MCP
+
+Skip this if you already used the combined prompt in step 1 and Playwright MCP is connected.
 
 This skill opens Salesforce in a real browser via [Playwright MCP](https://github.com/microsoft/playwright-mcp). You do **not** need to edit config files or run terminal commands yourself — **ask your AI agent to install it**.
 
