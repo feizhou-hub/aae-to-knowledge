@@ -12,11 +12,22 @@ Agent skill for turning Workday WSP Salesforce appointments (Ask an Expert, `REQ
 
 ## Install
 
-You do **not** need git. Get the skill, then install Playwright MCP. If you use the first prompt below, both steps happen in one chat.
+You do **not** need git. Pick **one** way to get the skill, then install Playwright MCP (Option 1 does both in one chat).
 
 ### 1. Get the skill
 
-#### Ask the agent (no git — recommended)
+Pick **one** option. Do not mix them.
+
+| Option | Best for | Git? | Terminal? | Cursor + Claude in one step? | Then install Playwright MCP? |
+|--------|----------|------|-----------|------------------------------|------------------------------|
+| [1 — Ask the agent](#option-1--ask-the-agent-recommended) | Non-technical setup | No | No | Yes | Included in the prompt |
+| [2 — Download a ZIP](#option-2--download-a-zip) | Finder / File Explorer | No | No | No — copy the folder once per app | Yes, [step 2](#2-install-playwright-mcp) |
+| [3 — `npx` command](#option-3--npx-command) | You have Node.js | No | One command | Yes | Yes, [step 2](#2-install-playwright-mcp) |
+| [4 — git clone](#option-4--git-clone) | You already use git | Yes | Yes | No — clone once per app | Yes, [step 2](#2-install-playwright-mcp) |
+
+#### Option 1 — Ask the agent (recommended)
+
+Paste a prompt. No git, no ZIP, no terminal.
 
 1. Open a **new chat** in Cursor or Claude Code.
 2. Paste this prompt:
@@ -37,9 +48,11 @@ You do **not** need git. Get the skill, then install Playwright MCP. If you use 
 
 Do not send a link to `SKILL.md` alone. The agent needs the whole folder (`lib/`, `references/`, and `SKILL.md`).
 
-#### Download a ZIP (no git, no terminal)
+If you used Option 1, skip [step 2](#2-install-playwright-mcp) unless Playwright MCP is not connected.
 
-Use this if you would rather not ask the agent to download the skill.
+#### Option 2 — Download a ZIP
+
+Use Finder or File Explorer. No git, no terminal.
 
 1. Open [github.com/feizhou-hub/aae-to-knowledge](https://github.com/feizhou-hub/aae-to-knowledge).
 2. Click the green **Code** button → **Download ZIP**.
@@ -73,47 +86,49 @@ aae-to-knowledge/
   references/
 ```
 
-Then continue with [Playwright MCP](#2-install-playwright-mcp) below. After both steps, **start a new chat**.
+Then go to [step 2 — Install Playwright MCP](#2-install-playwright-mcp). After both steps, **start a new chat**.
 
-#### One command with `npx` (Cursor and Claude Code)
+#### Option 3 — `npx` command
 
-Needs [Node.js](https://nodejs.org/) so `npx` is available. You do not need git. This installs the skill globally for **both** Cursor and Claude Code:
+Needs [Node.js](https://nodejs.org/) so `npx` is available. No git.
+
+**Both Cursor and Claude Code:**
 
 ```bash
 npx skills add https://github.com/feizhou-hub/aae-to-knowledge -g --agent cursor claude-code
 ```
 
-Cursor only:
+**Cursor only:**
 
 ```bash
 npx skills add https://github.com/feizhou-hub/aae-to-knowledge -g --agent cursor
 ```
 
-Claude Code only:
+**Claude Code only:**
 
 ```bash
 npx skills add https://github.com/feizhou-hub/aae-to-knowledge -g --agent claude-code
 ```
 
-`-g` puts the skill in your user skills folder (every project). Then continue with [Playwright MCP](#2-install-playwright-mcp) below, and **start a new chat**.
+`-g` puts the skill in your user skills folder (every project). Then go to [step 2 — Install Playwright MCP](#2-install-playwright-mcp), and **start a new chat**.
 
-#### Clone with git (optional)
+#### Option 4 — git clone
 
-Only if you already use git:
+Only if you already use git.
 
-**Claude Code**
+**Claude Code:**
 
 ```bash
 git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.claude/skills/aae-to-knowledge
 ```
 
-**Cursor**
+**Cursor:**
 
 ```bash
 git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.cursor/skills/aae-to-knowledge
 ```
 
-Then continue with Playwright MCP below.
+Then go to [step 2 — Install Playwright MCP](#2-install-playwright-mcp).
 
 ### 2. Install Playwright MCP
 
