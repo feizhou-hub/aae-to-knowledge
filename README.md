@@ -132,7 +132,7 @@ Then go to [step 2 — Install Playwright MCP](#2-install-playwright-mcp).
 
 ### 2. Install Playwright MCP
 
-Skip this if you already used the combined prompt in step 1 and Playwright MCP is connected.
+Skip this if you used **Option 1** and Playwright MCP is already connected.
 
 This skill opens Salesforce in a real browser via [Playwright MCP](https://github.com/microsoft/playwright-mcp). You do **not** need to edit config files or run terminal commands yourself — **ask your AI agent to install it**.
 
