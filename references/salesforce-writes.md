@@ -51,7 +51,7 @@ From the request: **Knowledge** tab → **New Article** → default template →
 | Title / Resolution / Description | Rich-text HTML via TinyMCE |
 | URL Name | Hyphenated slug — overwrite cleanly after Title (auto-fill concatenates) |
 | Internal Audience Only | Checked |
-| Internal Notes | `Sourced from AAE request REQ-###### (Appointment APP-######): <link>` |
+| Internal Notes | Source line first (`Sourced from AAE request REQ-###### (Appointment APP-######): <link>`), then a blank line, then context. TinyMCE needs `<p>&nbsp;</p>` after the source paragraph — see below |
 | Visible in Community to | Empty unless user says otherwise |
 
 Save (not Save & New). Do **not** Publish.
@@ -66,7 +66,7 @@ Save (not Save & New). Do **not** Publish.
 globalThis.__kaRichTextFields = {
   description: '<p>...</p>',
   resolution: '<p>...</p>',
-  internalNotes: '<p>Sourced from...</p>',
+  internalNotes: '<p>Sourced from...</p>\n<p>&nbsp;</p>\n<p>Subject: ...</p>',
 };
 // getMcpSetRichTextScript('REQ-######') via browser_run_code_unsafe
 ```
@@ -86,7 +86,7 @@ Comparison tables separate **paired concepts** (A vs B, on vs off, scenario matr
 | Markdown draft | **One blank line** before the `\|` table row **and** one blank line after the last table row |
 | Salesforce HTML (before) | `<p><br></p>` before `<table>` **and** `margin-top: 16px` on `<table>` |
 | Salesforce HTML (after) | `margin-bottom: 16px` on `<table>` **and** `<p>&nbsp;</p>` immediately after `</table>` before the next paragraph. TinyMCE often collapses `<p><br></p>` after tables; `&nbsp;` survives Save |
-| `mdToHtml()` | Inserts before- and after-table spacing automatically — still add the blank lines in markdown |
+| `mdToHtml()` | Inserts before- and after-table spacing automatically — still add the blank lines in markdown. Also inserts `<p>&nbsp;</p>` after an Internal Notes source paragraph (`Sourced from AAE request`) |
 
 ```html
 <p>Root cause explanation ending the prose block.</p>
@@ -118,6 +118,18 @@ Comparison tables separate **paired concepts** (A vs B, on vs off, scenario matr
 ```
 
 Optional row tint: present `#eef8f1`, missing `#fdecea`. Label an empty delimiter slot **missing** (red) instead of `??`.
+
+### Internal Notes spacing
+
+Put the source line (REQ, APP, appointment URL) in its own paragraph. Then **one blank line**, then `Subject:` and the rest. TinyMCE collapses adjacent `<p>` tags, so `<p><br></p>` is not enough — use `&nbsp;`:
+
+```html
+<p>Sourced from AAE request REQ-###### (Appointment APP-######): https://workday.lightning.force.com/lightning/r/Appointment__c/.../view</p>
+<p>&nbsp;</p>
+<p>Subject: ...</p>
+```
+
+`mdToHtml()` inserts that spacer after a paragraph that starts with `Sourced from AAE request`. Do not concatenate the URL and `Subject:` into one paragraph.
 
 ### Sequential steps in Resolution (step express HTML)
 

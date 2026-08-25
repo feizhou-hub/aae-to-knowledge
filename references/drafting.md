@@ -253,6 +253,20 @@ Remove: account/company names, contact/employee names, tenant-specific IDs.
 
 Test: would this be equally useful for a different customer with the same issue?
 
+### Internal Notes
+
+Lead with the source line (REQ id, APP id, appointment URL). Then **one blank line**, then appointment context (subject, write-up, consultant guidance, categories). Do not run the URL into `Subject:` — TinyMCE collapses adjacent `<p>` tags, so the Salesforce field looks like one block.
+
+Markdown:
+
+```markdown
+Sourced from AAE request REQ-###### (Appointment APP-######): https://workday.lightning.force.com/lightning/r/Appointment__c/.../view
+
+Subject: ...
+```
+
+`mdToHtml()` inserts `<p>&nbsp;</p>` after the source paragraph so that blank line survives Save. Hand-written HTML must include that spacer too (see [salesforce-writes.md](salesforce-writes.md#internal-notes-spacing)).
+
 ## Local draft file
 
 Save as `draft-REQ-######.md` in the project directory (not chat-only). Include:

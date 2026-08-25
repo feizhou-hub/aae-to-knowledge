@@ -20,4 +20,14 @@ assert.match(
 assert.doesNotMatch(html, /<p><em>Use when/);
 assert.match(html, /<strong>any combination<\/strong>/);
 
+const notes = mdToHtml(`Sourced from AAE request REQ-474692 (Appointment APP-00557483): https://workday.lightning.force.com/lightning/r/Appointment__c/a3NVT000005lthJ2AQ/view
+
+Subject: Best practices for Service Centers.
+`);
+assert.match(
+  notes,
+  /Sourced from AAE request REQ-474692[\s\S]*?<\/p>\n<p>&nbsp;<\/p>\n<p>Subject:/
+);
+assert.equal((notes.match(/<p>&nbsp;<\/p>/g) || []).length, 1);
+
 console.log('md-to-ka-html.test.js: ok');

@@ -116,6 +116,7 @@ Default template: **Knowledge Articles** (Description + Resolution, no separate 
 - **Generalize** when the resolution applies broadly; cite a specific integration or object as an example in the body, not the title
 - **Decide** whether Resolution items are sequential steps or parallel strategies based on the request — do not default to numbered steps
 - **Parallel strategies:** chooser table (situation → **A / B / C**) + `### Option A — Title` + italic *Use when* + bullets. Letters, not Optional 1/2/3 (see drafting.md)
+- **Internal Notes:** source line (REQ + APP + URL), then a blank line, then context — TinyMCE needs `<p>&nbsp;</p>` after the source paragraph (see drafting.md)
 - **Structure for scanability:** `###` headings + bullet lists in Resolution; comparison tables for confused pairs in Description; color the differing token when two strings are almost identical (see drafting.md)
 - **Optional — branching logic:** Mermaid in the local draft when 3+ if/else paths would be hard to scan (see [references/uml-diagrams.md](references/uml-diagrams.md)). In Salesforce, activity flowcharts must be a **PNG embed** — `mdToHtml()` table conversion is not the graphic.
 
