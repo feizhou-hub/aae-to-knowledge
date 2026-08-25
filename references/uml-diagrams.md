@@ -14,6 +14,7 @@ Salesforce TinyMCE does **not** render Mermaid. The local markdown preview (boxe
 | Multiple actors and what each can do (security, roles, integrations) | **Use case** matrix |
 | States a record/integration passes through (Queued → Processing → Complete) | **State** diagram |
 | One correct procedure, no branching | Numbered **steps** (step express) — not a diagram |
+| Independent recommendations (apply any combination) | **Option A / B / C** chooser table — not a diagram, not step express |
 
 **Rule of thumb:** If you find yourself writing "If X, then… Otherwise, if Y… Otherwise, if Z…" more than once in the same section, **consider** a diagram instead of more prose.
 

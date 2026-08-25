@@ -128,11 +128,13 @@ Read the request notes and decide which pattern fits **before** writing the Reso
 | Pattern | Use when | Format |
 |---------|----------|--------|
 | **Sequential steps** | Each action depends on the prior one; there is one correct order (configure → test → deploy; diagnose → fix → verify) | **Step express** layout: numbered circle + title + italic context + numbered sub-steps (see below) |
-| **Parallel strategies** | Recommendations are independent; the customer can apply one or more without doing the others first (batch sizing, parallel runs, off-peak scheduling, monitoring) | `###` heading per strategy + bullet list (see readability below) |
+| **Parallel strategies** | Recommendations are independent; the customer can apply one or more without doing the others first (batch sizing, lock-down vs split, monitoring) | **Chooser table** (situation → A/B/C) + `### Option A — Title` + italic *Use when* + bullets. Letters, not numbers. No dotted step rail |
 
 **Ask:** Would step 2 still make sense if the customer skipped step 1? If yes, they are parallel strategies, not steps.
 
 Do not relabel parallel strategies as steps, and do not flatten a true procedure into unordered bullets.
+
+**Do not** number parallel strategies as Optional 1, Optional 2, or Step 1 — numbers still read as a sequence. Use **Option A / B / C**. Do not use step-express circles with a dotted connector (that pattern is sequential only).
 
 #### Branching logic — optional diagrams
 
@@ -152,8 +154,8 @@ Salesforce renders Resolution as HTML. Dense paragraphs are hard to scan — str
 
 | Element | Do | Avoid |
 |---------|-----|-------|
-| **Step / strategy headings** | Step express: circled number + bold title + italic context line; or `###` for parallel strategies | Bold text on its own line (looks like body text in TinyMCE) |
-| **Spacing between steps** | Dotted vertical connector between numbered circles in step express HTML | Stacked paragraphs with no visual break between steps |
+| **Step / strategy headings** | Sequential: step express numbered circles + italic context. Parallel: `### Option A — Title` + italic *Use when* (no numbered rail) | Bold text on its own line (looks like body text in TinyMCE); **Optional 1 / 2 / 3** headings |
+| **Spacing between steps** | Sequential: dotted vertical connector between numbered circles. Parallel: chooser table, then option blocks with no connector | Stacked paragraphs with no visual break between steps |
 | **Body under each heading** | 1–2 short paragraphs or a bullet list (one idea per line) | Long paragraphs mixing rationale, numbers, and examples |
 | **Bullet lead-ins** | `**Bold label:** explanation` (e.g. `**Test in sandbox first.** Validate batch size…`) | Scattering bold on random words inside prose |
 | **Intro** | One or two sentences framing the approach | Repeating the Description |
@@ -161,12 +163,35 @@ Salesforce renders Resolution as HTML. Dense paragraphs are hard to scan — str
 
 **Parallel strategies example (markdown):**
 
-```markdown
-### Reduce and partition batch files
+Lead with “apply any combination,” then a chooser table, then **Option A / B / C** (letters). Each option gets an italic *Use when* line so readers can skip. `mdToHtml()` styles `*Use when …*` as gray italic.
 
-- **Test in sandbox first.** Validate batch size before production.
-- **Target 50,000 records per file** instead of 100,000.
-- **Example:** partition 3 million records into 60 files of 50,000 each.
+```markdown
+Apply **any combination**. These are not sequential steps.
+
+| If this is the situation | Apply |
+|---|---|
+| Mixed operational and notification mailboxes on one Service Center | **A** |
+| Shared inbox should receive notifications | **B** |
+| Notification-only account can still sign in | **C** |
+
+### Option A — Separate Service Centers by purpose
+
+*Use when one Service Center mixes unrelated mailboxes or processes.*
+
+- **Grant security on the Service Center.** Representative access comes from the Service Center.
+- **Do not reuse an operational Service Center** for an unrelated mailbox.
+
+### Option B — Use Service Centers as shared notification recipients
+
+*Use when the recipient is a shared inbox, not a named worker.*
+
+- **Keep security to a minimum.** Enable only the access required to receive the notifications.
+
+### Option C — Lock down notification-only representative accounts
+
+*Use when a notification-only representative could still sign in to Workday.*
+
+- **Set Do Not Allow UI Login to Yes** on the representative Workday account.
 ```
 
 **Sequential steps example (markdown — step express):**

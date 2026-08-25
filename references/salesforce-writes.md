@@ -156,6 +156,39 @@ For numbered procedures, use the **step express** layout: circled step number wi
 
 Repeat for each step. The dotted line must span from one circle to the next — use the nested `height: 100%` connector row, not a short stub. Add `padding-bottom: 20px` on the content cell when another step follows (last step: `padding-bottom: 0`). Omit the connector row on the last step. Nest `<ul>` inside an `<ol>` item for sub-options (for example, parameter fields). See [drafting.md](drafting.md#resolution-readability-rich-text) for markdown equivalents.
 
+### Parallel strategies in Resolution (chooser + Option A/B/C)
+
+Independent recommendations are **not** step express. Do not use numbered circles or a dotted connector rail.
+
+Markdown in the local draft (chooser table + `### Option A —` + `*Use when …*`): `mdToHtml()` converts the table and styles each `*Use when …*` line as gray italic. Hand-written HTML:
+
+```html
+<p>Apply <strong>any combination</strong>. These are not sequential steps.</p>
+<p><br></p>
+<table style="border-collapse: collapse; width: 100%; border: 1px solid #d8dde6; margin-top: 16px; margin-bottom: 16px;" border="1" cellpadding="6" cellspacing="0">
+  <thead>
+    <tr>
+      <th style="background-color: #f3f3f3; text-align: left; border: 1px solid #d8dde6; padding: 8px;">If this is the situation</th>
+      <th style="background-color: #f3f3f3; text-align: left; border: 1px solid #d8dde6; padding: 8px;">Apply</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border: 1px solid #d8dde6; padding: 8px; vertical-align: top;">Situation that matches option A</td>
+      <td style="border: 1px solid #d8dde6; padding: 8px; vertical-align: top;"><strong>A</strong></td>
+    </tr>
+  </tbody>
+</table>
+<p>&nbsp;</p>
+<h3>Option A — Short strategy title</h3>
+<p style="margin: 0 0 12px; font-style: italic; color: #706e6b; font-size: 13px;">Use when this situation applies.</p>
+<ul>
+  <li><strong>Bold label.</strong> Explanation.</li>
+</ul>
+```
+
+Use **Option A / B / C** (letters). Do not label them Optional 1, Optional 2, or Step 1.
+
 ### UML diagrams (optional — activity, sequence, use case)
 
 TinyMCE does **not** render Mermaid. The local preview graphic will not appear in the KA unless you embed a **PNG**.
