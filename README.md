@@ -75,6 +75,28 @@ aae-to-knowledge/
 
 Then continue with [Playwright MCP](#2-install-playwright-mcp) below. After both steps, **start a new chat**.
 
+#### One command with `npx` (Cursor and Claude Code)
+
+Needs [Node.js](https://nodejs.org/) so `npx` is available. You do not need git. This installs the skill globally for **both** Cursor and Claude Code:
+
+```bash
+npx skills add https://github.com/feizhou-hub/aae-to-knowledge -g --agent cursor claude-code
+```
+
+Cursor only:
+
+```bash
+npx skills add https://github.com/feizhou-hub/aae-to-knowledge -g --agent cursor
+```
+
+Claude Code only:
+
+```bash
+npx skills add https://github.com/feizhou-hub/aae-to-knowledge -g --agent claude-code
+```
+
+`-g` puts the skill in your user skills folder (every project). Then continue with [Playwright MCP](#2-install-playwright-mcp) below, and **start a new chat**.
+
 #### Clone with git (optional)
 
 Only if you already use git:
