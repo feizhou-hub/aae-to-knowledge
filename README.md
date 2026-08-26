@@ -20,29 +20,47 @@ Pick **one** option. Do not mix them.
 
 | Option | Best for | Git? | Terminal? | Cursor + Claude in one step? | Then install Playwright MCP? |
 |--------|----------|------|-----------|------------------------------|------------------------------|
-| [1 — Ask the agent](#option-1--ask-the-agent-recommended) | Non-technical setup | No | No | Yes | Included in the prompt |
+| [1 — Ask the agent](#option-1--ask-the-agent-recommended) | Non-technical setup | No | No | No — use the prompt for the app you're in | Included in the prompt |
 | [2 — Download a ZIP](#option-2--download-a-zip) | Finder / File Explorer | No | No | No — copy the folder once per app | Yes, [step 2](#2-install-playwright-mcp) |
 | [3 — `npx` command](#option-3--npx-command) | You have Node.js | No | One command | Yes | Yes, [step 2](#2-install-playwright-mcp) |
 | [4 — git clone](#option-4--git-clone) | You already use git | Yes | Yes | No — clone once per app | Yes, [step 2](#2-install-playwright-mcp) |
 
 #### Option 1 — Ask the agent (recommended)
 
-Paste a prompt. No git, no ZIP, no terminal.
+Paste a prompt. No git, no ZIP, no terminal. Use **only the prompt for the app you are in**.
 
 1. Open a **new chat** in Cursor or Claude Code.
-2. Paste this prompt:
+2. Paste the matching prompt:
+
+   **Cursor**
 
    ```
    Install the aae-to-knowledge skill from https://github.com/feizhou-hub/aae-to-knowledge
 
    Download the whole repository (not just SKILL.md) into:
-   - Cursor: ~/.cursor/skills/aae-to-knowledge
-   - Claude Code: ~/.claude/skills/aae-to-knowledge
+   ~/.cursor/skills/aae-to-knowledge
 
    Then install Playwright MCP so I can create Knowledge Articles from Salesforce appointments.
    ```
 
-3. **Approve** what the agent asks for (downloading files, creating folders, editing MCP settings).
+   **Claude Code**
+
+   Claude Code starts in **Manual** mode (the default), which asks you to approve every file edit. Switch to **Accept edits** before pasting so the install can write the skill files without a prompt per edit:
+   - **CLI:** press `Shift+Tab` until the status bar shows `accept edits on`
+   - **VS Code / desktop app:** use the mode selector and pick **Accept edits**
+
+   Then paste:
+
+   ```
+   Install the aae-to-knowledge skill from https://github.com/feizhou-hub/aae-to-knowledge
+
+   Download the whole repository (not just SKILL.md) into:
+   ~/.claude/skills/aae-to-knowledge
+
+   Then install Playwright MCP so I can create Knowledge Articles from Salesforce appointments.
+   ```
+
+3. **Approve** what the agent asks for (downloading files, creating folders, editing MCP settings). Shell commands and MCP setup still need your approval in Accept edits mode.
 4. When it finishes, **start a new chat** so the skill is picked up.
 5. On the **first KA run**, a browser window opens — **log into Workday Salesforce** (SSO/MFA). That login is saved for later runs.
 
