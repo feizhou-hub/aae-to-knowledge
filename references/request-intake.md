@@ -38,9 +38,9 @@ Split the user's list into chunks of 3. Process chunk 1 (Steps 1–4), present d
 
 - Record Type (e.g. "Ask an Expert") → maps to Target WSP Service in Step 5. It lives on the **highlights panel**, not the Details tabpanel.
 - Product Area and Capability → Related Categories in Step 5
-- Subject and the customer write-up live in the collapsed **Request Details** accordion. The write-up field is labeled **Details**, not Description. Intake expands that section and **polls until Subject appears** (same 15s pattern as Notes), then parses with `parseRequestDetails()` so it does not pick up **Ask an Expert Details**. Do not re-click the Details tab after expanding — that can reset the accordion.
+- Subject and the customer write-up live in the collapsed **Request Details** accordion. The write-up field is labeled **Details**, not Description. Intake **force-cycles** that accordion (collapse then expand) before polling for Subject — Lightning often reports `aria-expanded="true"` on an empty section. It also skips re-clicking an already selected Details tab (that remount resets the accordion). Then it polls until Subject appears and parses with `parseRequestDetails()` so it does not pick up **Ask an Expert Details**.
 
-If Subject is still missing after intake, `aria-expanded="true"` can still mean an empty accordion. **Collapse then expand** Request Details and poll until `Subject` appears — do not draft from Product Area/Capability alone.
+Do **not** spend a second Playwright pass collapsing/expanding Request Details unless Subject is still missing after `getMcpIntakeScript`. If it is, collapse then expand once more — do not draft from Product Area/Capability alone.
 
 ### Notes tab
 
@@ -49,7 +49,7 @@ The Notes related list has a **Private** column with a checkbox per row.
 - **Unchecked** = public, customer-visible → use these
 - **Checked** = internal-only → skip unless user asks for internal context
 
-The related list often shows **Loading** / **No records to display** for several seconds after the tab is visible. Intake polls until `Created By:` appears (or 15s). Do not treat that placeholder as an empty appointment. If notes still look like a loading placeholder, wait and re-read — do not search Knowledge from Product Area/Capability words alone.
+Notes is often under the record **More Tabs** overflow (Details + Questionnaire fill the tab bar). Intake opens that menu when the Notes tab is not visible, then polls until `Created By:` appears (or 15s). Do not treat **Loading** / **No records to display** as an empty appointment. If notes still look like a loading placeholder after intake, wait and re-read — do not search Knowledge from Product Area/Capability words alone.
 
 Reconstruct chronologically (list is usually newest-first): what was reported, tried, root cause, resolution.
 
@@ -101,11 +101,11 @@ Depends on audience (default: **Internal Audience Only**):
 
 Use global Salesforce search with core technical terms (integration name, error text, feature — not customer or consultant names). **Compare titles first** — only open an article if the title looks like the same root cause.
 
-If Subject was missing, intake’s auto-query often becomes `"General Orchestrate … <person names>"`. **Override** with the subject plus technical terms before trusting `duplicateCheck`.
+Intake strips note authors and `@mentions` from the auto-query. If Subject was missing, still **override** with the subject plus technical terms — do not trust a query built from Product Area/Capability alone.
 
 **Do not** `browser_navigate` to `/lightning/globalSearch/<term>` — that path does not exist in Lightning and triggers a **"Page doesn't exist"** modal. Search via the Lightning search box instead.
 
-**Do not** click the exact-name **Knowledge** link in the app nav. That opens Recently Viewed, not search results. Click the search-results filter named like `Knowledge 5+`.
+**Do not** click the exact-name **Knowledge** link in the app nav. That opens Recently Viewed, not search results. Click the search-results filter named like `Knowledge 5+` or Lightning’s compacted `Knowledge5+`.
 
 `a[href*="Knowledge__kav"]` on the search page also matches **workspace tab** links (open articles). Those are not hits. Read the **Search Results → Knowledge** section text (or click the Knowledge filter) before listing duplicates.
 

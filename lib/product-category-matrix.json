@@ -34,6 +34,10 @@
       "Orchestrate for Integrations - FINS": {
         "productLine": "Platform and Product Extensions",
         "productArea": "Orchestrate for Integrations - FINS"
+      },
+      "Authentication": {
+        "productLine": "Platform and Product Extensions",
+        "productArea": "Security - Integrations"
       }
     },
     "capability": {
@@ -49,7 +53,8 @@
       "Security": "Security",
       "Enterprise Interface Builder": "Enterprise Interface Builder",
       "EIB": "Enterprise Interface Builder",
-      "Document Transformation": "Document Transformation"
+      "Document Transformation": "Document Transformation",
+      "Authentication Policies": "Tenant Configuration"
     }
   },
   "matrix": {
@@ -203,7 +208,14 @@
       "Security - Absence": [],
       "Security - Compensation": [],
       "Security - FINS": [],
-      "Security - Integrations": [],
+      "Security - Integrations": [
+        "Basic Security Groups",
+        "Business Process Security Policies",
+        "Domain Security Policies",
+        "General",
+        "Roles",
+        "Tenant Configuration"
+      ],
       "Security - Learning": [],
       "Security - Talent Acquisition": [],
       "Security - Talent Management": [],

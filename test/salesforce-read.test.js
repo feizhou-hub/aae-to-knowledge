@@ -37,4 +37,38 @@ describe('getMcpIntakeScript intake contract', () => {
       're-clicking the Details tab after expand can reset the accordion'
     );
   });
+
+  it('force-cycles Request Details even when aria-expanded is already true (REQ-489686)', () => {
+    const script = getMcpIntakeScript(['REQ-489686']);
+    const cycle = functionSource(script, 'forceExpandRequestDetails');
+    assert.match(cycle, /Request Details/);
+    assert.match(cycle, /expanded === 'true'/);
+    assert.match(cycle, /scrollIntoViewIfNeeded/);
+    const details = functionSource(script, 'readDetailsSettled');
+    assert.match(details, /forceExpandRequestDetails/);
+    assert.match(details, /aria-selected/);
+    assert.doesNotMatch(
+      details,
+      /if \(await tab\.isVisible\(\)\.catch\(\(\) => false\)\) await tab\.click\(\)/,
+      're-clicking a selected Details tab remounts an empty Request Details accordion'
+    );
+  });
+
+  it('opens Notes from the More Tabs overflow (REQ-489686)', () => {
+    const script = getMcpIntakeScript(['REQ-489686']);
+    const open = functionSource(script, 'openNotesTab');
+    assert.match(open, /More Tabs/);
+    assert.match(open, /menuitem/);
+    const notes = functionSource(script, 'readNotesSettled');
+    assert.match(notes, /openNotesTab/);
+  });
+
+  it('inlines name-stripped duplicate search and Knowledge5+ result parsing', () => {
+    const script = getMcpIntakeScript(['REQ-487736']);
+    assert.match(script, /collectPersonTokens/);
+    assert.match(script, /MENTION_NAME/);
+    assert.match(script, /Knowledge\\s\*\\d/);
+    assert.match(script, /parseKnowledgeResultTitles/);
+    assert.match(script, /collectKnowledgeHits/);
+  });
 });

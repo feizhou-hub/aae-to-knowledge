@@ -228,7 +228,7 @@ globalThis.__kaArticleUrl = '<saved article url>';
 
 - Page opens with an empty first row — fill it, don't click New unless needed
 - **Prefer the appointment Product Area/Capability when those strings exist on the live picklist.** `resolveCategories()` against a stale matrix can return **Workday Extend** or **Integration**, which are often **not** Product Area options. Live PPE areas include **Orchestrate for Integrations - HCM**, **Orchestrate for Integrations - FINS**, **Integration Management**, **Workday Studio - HCM**, etc.
-- If `getByRole('option', { name: productArea })` times out, read the open option list and pick the appointment value when it is there — do not invent a matrix synonym
+- `getMcpFillScript` waits ~1.2s for an exact option, then reads the **open** picklist and maps stale names (for example appointment **Authentication** → live **Security - Integrations**). Do not wait 8s on a missing exact match or recover with extra MCP clicks.
 - If Capability has no exact matrix match, use the appointment capability name (including **General**) or closest semantic match
 - **Never** leave Product Capability blank when the appointment has a Capability — drafts must propose all 3 levels
 

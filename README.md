@@ -319,6 +319,7 @@ aae-to-knowledge/
 │   ├── category-resolver.js    # Maps request fields → Related Categories
 │   ├── product-category-matrix.json
 │   ├── fill-related-categories.js
+│   ├── picklist-match.js       # Live Related Categories picklist fallback
 │   ├── set-rich-text-fields.js
 │   └── extract-matrix.js       # Optional: refresh category matrix from Salesforce
 └── references/
@@ -340,6 +341,7 @@ The skill is mostly markdown instructions for the agent, but a few small Node mo
 | `category-resolver.js` | Maps appointment Product Area/Capability to Knowledge categories |
 | `set-rich-text-fields.js` | TinyMCE HTML fill by label (not editor index) |
 | `fill-related-categories.js` | Related Categories Playwright script |
+| `picklist-match.js` | Maps stale appointment labels onto the open live picklist |
 | `extract-matrix.js` | Optional maintenance — refresh `product-category-matrix.json` |
 
 ## Prerequisites
