@@ -145,7 +145,7 @@ Keep node labels short so they wrap cleanly. Save the PNG next to `draft-REQ-###
 <p>&nbsp;</p>
 ```
 
-Inline the data URI in the Playwright script with `JSON.stringify` (MCP `browser_run_code_unsafe` has **no** `require`). After Save, confirm a Description image whose `src` contains `servlet/rtaImage` and `naturalWidth > 0`.
+Put that `<img>` in the Description or Resolution HTML passed to `createKnowledgeDraft` (or a REST `PATCH` of `Description__c` / `Resolution__c` on an existing draft). Salesforce rewrites the data URI to `servlet/rtaImage` when the record is saved. Read the field back and confirm the `src` contains `servlet/rtaImage`.
 
 If the user asks why they cannot see the diagram: the table rail is already in the article — **replace it with the PNG** on Edit/Save. Do not stop at an explanation.
 

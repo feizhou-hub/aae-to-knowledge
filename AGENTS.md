@@ -1,101 +1,69 @@
 # Agent API — `lib/`
 
-## Review gate (highest priority after duplicate check)
+## Review gate (highest priority after the duplicate check)
 
 **Do not write to Salesforce until the user approves the local draft in a follow-up message.**
 
 | Step | Action | Salesforce? |
 |------|--------|-------------|
-| 1–3 | Read appointment, check duplicates | Read-only OK |
+| 1–3 | `readAppointment()`, `searchKnowledge()` | Read-only |
 | 4 | Save `draft-REQ-######.md`, `registerDraft()` | No writes |
-| — | **STOP. Present draft. Ask for approval.** | No writes |
-| 5 | `markApproved()` then create draft + categories | Writes OK |
+| — | **STOP. Present the draft. Ask for approval.** | No writes |
+| 5 | `markApproved()`, then `createKnowledgeDraft()` and `setRelatedCategories()` | Writes |
 
-"Create a KA" = Steps 1–4 only on the first turn.
+"Create a KA" is Steps 1–4 on the first turn.
 
-## API
+## Calls
 
 ```javascript
 const {
+  readAppointment,
+  searchKnowledge,
   registerDraft,
   markApproved,
   markCreated,
-  getMcpSetRichTextScript,
-  getMcpFillScript,
-  getMcpCreateArticleScript,
-  getMcpIntakeScript,
-  getMcpKnowledgeSearchScript,
-  resolveCategories,
-  productCategoryMatrix,
+  mdToHtml,
+  createKnowledgeDraft,
+  setRelatedCategories,
 } = require('./lib');
 
-// After saving draft markdown:
-registerDraft('REQ-439659', {
-  draftPath: 'draft-REQ-439659.md',
-  sourceUrl: 'https://workday.lightning.force.com/...',
+const row = await readAppointment('REQ-523290');
+
+registerDraft('REQ-523290', {
+  draftPath: 'draft-REQ-523290.md',
+  sourceUrl: row.appointment.url,
   title: 'Article Title',
 });
 
-// After user approves in their NEXT message:
-markApproved('REQ-439659');
-getMcpSetRichTextScript('REQ-439659'); // throws if not approved
-
-// After Salesforce Save succeeds:
-markCreated('REQ-439659', { articleUrl: 'https://workday.lightning.force.com/...' });
+// After the user approves in their next message:
+markApproved('REQ-523290');
+const created = await createKnowledgeDraft('REQ-523290', {
+  title,
+  urlName,
+  descriptionHtml: mdToHtml(descriptionMarkdown),
+  resolutionHtml: mdToHtml(resolutionMarkdown),
+  internalNotesHtml: mdToHtml(internalNotesMarkdown),
+});
+await setRelatedCategories('REQ-523290', created.Id, {
+  productLine: row.appointment.Product_Line__c,
+  productArea: row.appointment.Product__c,
+  productCapability: row.appointment.Sub_Product__c,
+});
+markCreated('REQ-523290', { articleUrl: created.url });
 ```
 
-See [SKILL.md](SKILL.md) for the full workflow. Step 4 stops for review; Step 5 uses the helpers in this folder.
+`createKnowledgeDraft` and `setRelatedCategories` throw while the draft is pending review. The session cookie is read from Chrome. Playwright is not used.
 
-## Salesforce browser session (mandatory)
+Object map and session principle: [references/objects.md](references/objects.md).
 
-Repeated Okta login prompts happen when agents fight over the Chrome profile. **Use one MCP browser only.**
+## Related Categories
 
-| Do | Don't |
-|----|-------|
-| Playwright MCP (`user-playwright`) only | `launchPersistentContext`, `.scratch-fetch-reqs.mjs`, or any second Chrome |
-| **First action:** `browser_navigate` to the Appointment URL (or search-open the REQ) so the headed window shows the record | Waiting to generate intake scripts before any browser move |
-| `getMcpIntakeScript()` for Steps 1–3 after the record is on screen | `pkill playwright-mcp`, `browser_close`, or a second Chrome |
-| Batch up to **3 REQ ids** per session | `browser_navigate` to `/lightning/page/home` (use current tab or Knowledge list) |
-| `browser_run_code_unsafe` with `salesforce-session.js` helpers for intake/search/writes | Standalone `browser_navigate` to home, globalSearch, or Knowledge__kav/new |
-| Leave MCP running after login | `--headless` MCP (login/MFA won't stick visibly) |
+Set Product Line, Product Area, and Product Capability from the appointment. `Product__c` is the Product Area string. `Sub_Product__c` is the Capability. `Product_Line__c` is the Product Line. Use those exact strings when they already appear on `Related_Category__c`.
 
-MCP profile (persistent): `~/Library/Caches/ms-playwright-mcp/workday-salesforce`
+## Private notes and attachments
 
-```javascript
-const { getMcpIntakeScript } = require('./lib');
-// Pass getMcpIntakeScript(['REQ-238778', 'REQ-241220']) to browser_run_code_unsafe
-```
+`readAppointment` returns public `Appointment_Comment__c` rows only, plus `privateNoteCount`. Do not read private bodies into the article. Attachments are out of scope unless the user asks and the public note HTML is not enough.
 
-If MCP shows **Not connected**: Cursor Settings → MCP → Playwright → Restart. Log in once in the headed browser window, then continue.
+## Duplicate check
 
-Session helpers live in `lib/salesforce-session.js` (`ensureReady`, `fetchAttachmentBase64SameTab`). Scripts never navigate to `/lightning/page/home`.
-
-## Related Categories (mandatory — 3 levels)
-
-Always set **Product Line**, **Product Area**, and **Product Capability** from the appointment (or closest matrix match). Prefer the **appointment Product Area string** when it appears on the live Related Categories picklist (for example **Orchestrate for Integrations - HCM**). Do not substitute **Workday Extend** or **Integration** — those names often are not picklist values. Never save with only two levels unless the Salesforce picklist has no capability for that area (rare — note it in Internal Notes).
-
-```javascript
-const { resolveCategories, productCategoryMatrix } = require('./lib');
-resolveCategories(appointmentProductArea, appointmentCapability, productCategoryMatrix);
-```
-
-## Attachments tab (optional — user request only)
-
-**Do not** open the **Attachments** tab as part of the standard intake. Default Steps 1–3 use **Details** and public **Notes**. Do not open the **Questionnaire** tab.
-
-Open **Attachments** only when the user explicitly asks (e.g. "check attachments", "attachments tab", "review the files"). That step is slow (extra navigation, image fetch, embed) and is not required for most requests.
-
-Inline screenshots in **Notes** are separate: follow [SKILL.md](SKILL.md) Step 2 only when a note references pasted images.
-
-## Duplicate check (Step 3)
-
-Intake already returns Knowledge **titles** (`duplicateCheck.articles`). Compare titles first. Never click the exact-name **Knowledge** app nav link.
-
-**Never** `browser_navigate` to `/lightning/globalSearch/...` — that URL does not exist and shows **"Page doesn't exist"**.
-
-```javascript
-const { getMcpKnowledgeSearchScript } = require('./lib');
-
-globalThis.__kaSearchQuery = 'Put Reference ID EIB load time';
-// Pass getMcpKnowledgeSearchScript() to browser_run_code_unsafe
-```
+`searchKnowledge({ titleLikes, phrases })` queries online `Knowledge__kav` versions. Judge titles. Do not treat a loose SOSL hit as a duplicate.

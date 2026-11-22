@@ -2,163 +2,121 @@
 name: aae-to-knowledge
 description: >-
   Turns Workday WSP Salesforce appointments (Ask an Expert, REQ-###### links)
-  into Knowledge Article drafts via Playwright — no Salesforce API. Use whenever
-  the user pastes a workday.lightning.force.com Appointment URL, asks to
-  create/draft/summarize a Knowledge Article from a request, or says "make a KA"
-  — even on the first message. Also use when a created KA is missing a visual
-  flowchart (TinyMCE does not render Mermaid), Related Categories picklist fill
-  fails, or Request Details Subject is empty after intake. "Create a KA" means
-  local draft only; Salesforce writes require a follow-up approval.
+  into Knowledge Article drafts using the Chrome Salesforce session (SOQL,
+  REST, and the Related Categories Apex action). Use whenever the user pastes
+  a workday.lightning.force.com Appointment URL, asks to create, draft, or
+  summarize a Knowledge Article from a request, or says "make a KA" — even on
+  the first message. Also use when a draft is missing Related Categories or
+  the article body needs a fix after creation. "Create a KA" means a local
+  draft only; Salesforce writes require a follow-up approval. Do not use
+  Playwright.
 ---
 
 # WSP Request → Knowledge Article
 
-Browser-only workflow (Playwright MCP). WSP consultants use the Salesforce UI, not the API.
+Read and write Salesforce with the Chrome session cookie. The objects and the session principle are in [references/objects.md](references/objects.md). House style is in [references/drafting.md](references/drafting.md).
 
-## Priorities (in order)
+## Priorities
 
-1. **No duplicate articles** — search before drafting
-2. **No customer PII** in article prose — generalize for any customer
-3. **No Salesforce writes until the user approves the local draft** — end your turn after Step 4
+1. **No duplicate articles** — SOQL on `Knowledge__kav` before drafting
+2. **No customer PII** in article prose — generalize for any customer. Do not copy private notes.
+3. **No Salesforce writes until the user approves the local draft** — end the turn after Step 4
 
-## Prerequisites
-
-- Playwright MCP (`browser_navigate`, `browser_snapshot`, `browser_click`, `browser_run_code_unsafe`, `browser_tabs`)
-- User logged into Salesforce in the driven browser; if login page appears, wait for user confirmation
-- **One MCP browser session** — do not launch a second Chrome or `pkill playwright-mcp` mid-workflow (see [AGENTS.md](AGENTS.md#salesforce-browser-session-mandatory))
-
-## Show the browser immediately (mandatory)
-
-The headed Playwright window is how the user knows intake started. **Open the appointment in the first tool batch of the turn** — same message as “using AAE-to-knowledge” — do not wait until drafting.md, category-resolver, or the intake script are ready.
-
-| User gave | First Playwright action |
-|-----------|-------------------------|
-| Appointment URL (`…/Appointment__c/…/view`) | `browser_navigate` to that exact URL (current tab) |
-| REQ-###### only | Short search/`browser_run_code_unsafe` that opens the appointment |
-
-You **may** read SKILL.md / request-intake.md **in parallel** with that navigate. You **may not** finish reading drafting, generating `.scratch-*.js`, or resolving categories *before* the browser has been sent to the record.
-
-Then continue Steps 1–3 on that tab (`getMcpIntakeScript` + `__kaAppointmentUrls` when the URL is known). Never `browser_navigate` to `/lightning/page/home`.
-
-## Multiple requests (bulk)
-
-Hard limit: **3 REQ ids per Playwright MCP session** (reads and writes). `getMcpIntakeScript()` only accepts the first 3 ids — it does **not** auto-chunk longer lists.
-
-### 2–3 REQ ids in one turn
-
-1. **Steps 1–3** — one `getMcpIntakeScript` call (Details + Notes + Knowledge titles; no home navigation between appointments)
-2. **Step 4** — save each `draft-REQ-######.md`, `registerDraft()` each, present all drafts, **STOP**
-3. **Step 5** (after approval) — one MCP session; create up to **3 articles** per batch script
-
-```js
-const { getMcpIntakeScript } = require('./lib');
-// Pass getMcpIntakeScript(['REQ-238778', 'REQ-241220']) to browser_run_code_unsafe
-```
-
-### More than 3 REQ ids
-
-**Chunk the list yourself** — process at most 3 per turn for Steps 1–4, and at most 3 per turn for Step 5 after approval.
-
-Example: user asks for REQ-A through REQ-E (5 ids).
-
-| Turn | Action |
-|------|--------|
-| 1 | Batch read + draft REQ-A, B, C → present all 3 drafts → **STOP** |
-| 2 | User approves → create 3 Salesforce drafts (A, B, C) |
-| 3 | Batch read + draft REQ-D, E → present both drafts → **STOP** |
-| 4 | User approves → create 2 Salesforce drafts (D, E) |
-
-Rules for every batch:
-
-- **One** Playwright MCP session per batch — do not `browser_close` or restart MCP mid-batch
-- Do **not** `browser_navigate` to `/lightning/page/home` between appointments or articles in the same batch
-- Each REQ still gets its own `registerDraft()` / review gate — approval can cover one or all drafts in a batch
-- Tell the user how many REQs remain after each batch
-
-→ Session rules: [AGENTS.md](AGENTS.md#salesforce-browser-session-mandatory) · Batch writes: [references/salesforce-writes.md](references/salesforce-writes.md#bulk-creation-up-to-3-per-session)
+Playwright MCP is not part of this workflow. Do not launch a browser, do not call `browser_navigate`, and do not fill the Lightning form.
 
 ## Workflow
 
 ```
-- [ ] Step 1: Read request (Details + public Notes)          → references/request-intake.md
-- [ ] Step 2: Check inline screenshots (if referenced)    → references/request-intake.md
-- [ ] Step 3: Search for duplicate Knowledge articles     → references/request-intake.md
-- [ ] Step 4: Draft locally (draft-REQ-######.md)         → references/drafting.md
-- [ ] STOP — present draft, ask for approval              → (below)
-- [ ] Step 5: Create Salesforce draft (after approval)    → references/salesforce-writes.md
-- [ ] Cleanup scratch files                               → references/lightning-tips.md
+- [ ] Step 1: Read Appointment__c + public Appointment_Comment__c
+- [ ] Step 2: Note inline images only when the public note depends on them
+- [ ] Step 3: Search Knowledge__kav for a duplicate
+- [ ] Step 4: Save draft-REQ-######.md and registerDraft()
+- [ ] STOP — present the draft and ask for approval
+- [ ] Step 5: After approval, REST-create Knowledge__kav, then Apex-save Related_Category__c
 ```
+
+Run the helpers from this skill directory (`lib/salesforce-api.js`).
 
 ### Step 1 — Read the request
 
-**First:** send the headed browser to the appointment (see [Show the browser immediately](#show-the-browser-immediately-mandatory)). **Then** run **one** intake script (`getMcpIntakeScript`) for Details + public Notes. Do not open the Questionnaire tab. Do not snapshot each tab separately. Reconstruct notes chronologically (list is usually newest-first). Read every public note fully — resolution may be in a different note than the root-cause diagnosis.
+```javascript
+const { readAppointment } = require('./lib');
+const row = await readAppointment('https://workday.lightning.force.com/lightning/r/Appointment__c/a3N…/view');
+// or readAppointment('REQ-523290')
+```
 
-→ Full guidance: [references/request-intake.md](references/request-intake.md)
+Use `appointment.Subject__c`, `appointment.detailsText`, `appointment.Product_Line__c`, `appointment.Product__c` (Product Area), and `appointment.Sub_Product__c` (Capability). Rebuild the story from `publicNotes` in `CreatedDate` order. `privateNoteCount` is informational. Never put a private note body into the draft.
 
-### Step 2 — Screenshots (notes only, by default)
+If `readAppointment` says there is no `sid`, ask the user to log into Salesforce in Chrome and retry. Do not open Playwright.
 
-Only if a note references pasted **inline** screenshots. Inline images live in shadow DOM.
+### Step 2 — Screenshots
 
-**Do not open the Attachments tab** unless the user explicitly asks (e.g. "check attachments", "attachments tab"). That is not part of the standard workflow — it adds significant time and is only for explicit requests.
-
-→ Full guidance: [references/request-intake.md](references/request-intake.md#screenshots)
+Public note HTML may contain `file.force.com` image URLs. Fetch one only when the words do not already state the resolution. Do not open an Attachments tab.
 
 ### Step 3 — Duplicate check
 
-`getMcpIntakeScript` runs Knowledge search in the same MCP call (override with `globalThis.__kaSearchQuery`). Compare returned **titles** first; only open an article if a title matches the same root cause. Never click the exact-name **Knowledge** app nav link.
+```javascript
+const { searchKnowledge } = require('./lib');
+const hits = await searchKnowledge({
+  titleLikes: ['Expense REST', 'Get_Expense_Reports'],
+  phrases: ['"Expense REST"'],
+});
+```
 
-→ Full guidance: [references/request-intake.md](references/request-intake.md#duplicate-check)
+Compare titles. Open an article only when the title is the same root cause. A near match belongs in the draft's duplicate table as related, not as a reason to stop, unless it already answers the question.
 
 ### Step 4 — Local draft
 
-Default template: **Knowledge Articles** (Description + Resolution, no separate Issue/Cause). Save `draft-REQ-######.md` in the project directory. Match house style:
+Save `draft-REQ-######.md`. Template: **Knowledge Articles** (Description + Resolution). Follow [references/drafting.md](references/drafting.md).
 
-- **Generalize** when the resolution applies broadly; cite a specific integration or object as an example in the body, not the title
-- **Decide** whether Resolution items are sequential steps or parallel strategies based on the request — do not default to numbered steps
-- **Parallel strategies:** chooser table (situation → **A / B / C**) + `### Option A — Title` + italic *Use when* + bullets. Letters, not Optional 1/2/3 (see drafting.md)
-- **Internal Notes:** source line (REQ + APP + URL), then a blank line, then context — TinyMCE needs `<p>&nbsp;</p>` after the source paragraph (see drafting.md)
-- **Structure for scanability:** `###` headings + bullet lists in Resolution; comparison tables for confused pairs in Description; color the differing token when two strings are almost identical (see drafting.md)
-- **Optional — branching logic:** Mermaid in the local draft when 3+ if/else paths would be hard to scan (see [references/uml-diagrams.md](references/uml-diagrams.md)). In Salesforce, activity flowcharts must be a **PNG embed** — `mdToHtml()` table conversion is not the graphic.
+Proposed categories are the appointment's three levels when those exact strings exist on `Related_Category__c`. Say so in the draft.
 
-```js
+```javascript
 const { registerDraft } = require('./lib');
 registerDraft('REQ-######', { draftPath: 'draft-REQ-######.md', sourceUrl, title });
 ```
 
-→ House style & templates: [references/drafting.md](references/drafting.md)
+### HARD STOP
 
-### HARD STOP — human review
+**End the turn here.** Show the full draft. Ask the user to approve or edit it.
 
-**End your turn here.** Present the full draft and ask the user to approve or request edits.
-
-- "Create a KA" / "make a KA" / pasting an appointment link = **Steps 1–4 only** on the first turn
-- Do **not** navigate to `Knowledge__kav/new`, click New Article/Save, or fill Related Categories until the user's **next message** explicitly approves ("approved", "looks good", "create it in Salesforce", "go ahead")
+"Create a KA", "make a KA", or an appointment link is Steps 1–4 only. The next message has to say approved, looks good, create it in Salesforce, go ahead, or the same clear approval.
 
 ### Step 5 — Salesforce draft (after approval only)
 
-```js
-const { markApproved, markCreated, getMcpSetRichTextScript, getMcpFillScript } = require('./lib');
+```javascript
+const { markApproved, markCreated, mdToHtml, createKnowledgeDraft, setRelatedCategories } = require('./lib');
 
 markApproved('REQ-######');
-// ... create article via Playwright ...
-markCreated('REQ-######', { articleUrl });
+const created = await createKnowledgeDraft('REQ-######', {
+  title,
+  urlName,
+  descriptionHtml: mdToHtml(descriptionMarkdown),
+  resolutionHtml: mdToHtml(resolutionMarkdown),
+  internalNotesHtml: mdToHtml(internalNotesMarkdown),
+});
+await setRelatedCategories('REQ-######', created.Id, {
+  productLine, productArea, productCapability,
+});
+markCreated('REQ-######', { articleUrl: created.url });
 ```
 
-Use `salesforce-write.js` (via `require('./lib')`, not the underlying modules directly) — it enforces the review gate. After the article exists, gated helpers throw; post-create edits use the ungated modules (see salesforce-writes.md).
+`createKnowledgeDraft` and `setRelatedCategories` throw if the draft is not approved. The article stays a draft. Do not publish.
 
-→ Form fill, TinyMCE, PNG diagrams, categories: [references/salesforce-writes.md](references/salesforce-writes.md)
+Return:
 
-## Deliverable
+**Article:** [Title](https://workday.lightning.force.com/lightning/r/Knowledge__kav/ka0…/view)
 
-After Step 5, always return the draft URL:
+## Several requests
 
-**Article:** [Title](https://workday.lightning.force.com/lightning/r/Knowledge__kav/ka0VT.../view)
+There is no browser batch limit. Read every appointment the user named, write one local draft each, present them together, and stop. Create Salesforce drafts only after approval, and only for the drafts they approved.
 
-Remind the user it is a **draft** (not published). Do not click Publish.
+## Where to read next
 
-## Tooling
-
-| Need | Where |
-|------|-------|
-| Review gate, category resolver, rich-text helpers, batch read | `lib/` — see [AGENTS.md](AGENTS.md) |
-| Lightning navigation gotchas | [references/lightning-tips.md](references/lightning-tips.md) |
+| Need | File |
+|------|------|
+| Why these objects, and how the session is used | [references/objects.md](references/objects.md) |
+| What to pull from the appointment | [references/request-intake.md](references/request-intake.md) |
+| Title, Description, Resolution, Internal Notes | [references/drafting.md](references/drafting.md) |
+| REST body and the Apex category call | [references/salesforce-writes.md](references/salesforce-writes.md) |
+| Review-gate functions | [AGENTS.md](AGENTS.md) |
