@@ -30,4 +30,27 @@ assert.match(
 );
 assert.equal((notes.match(/<p>&nbsp;<\/p>/g) || []).length, 1);
 
+const steps = mdToHtml(`Intro.
+
+**1 — First**
+*Context one*
+
+1. Do a.
+2. Do b.
+   - sub x
+
+**2 — Second**
+*Context two*
+
+1. Do c.
+
+\`\`\`
+a < b
+\`\`\`
+`);
+assert.equal((steps.match(/border-radius: 50%/g) || []).length, 2);
+assert.equal((steps.match(/border-left: 2px dotted/g) || []).length, 1);
+assert.match(steps, /<li>Do b\.<ul><li>sub x<\/li><\/ul><\/li>/);
+assert.match(steps, /<pre [^>]*>a &lt; b<\/pre>/);
+
 console.log('md-to-ka-html.test.js: ok');

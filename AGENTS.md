@@ -23,7 +23,9 @@ const {
   markApproved,
   markCreated,
   mdToHtml,
+  parseDraftSections,
   createKnowledgeDraft,
+  updateKnowledgeDraft,
   setRelatedCategories,
 } = require('./lib');
 
@@ -52,7 +54,7 @@ await setRelatedCategories('REQ-523290', created.Id, {
 markCreated('REQ-523290', { articleUrl: created.url });
 ```
 
-`createKnowledgeDraft` and `setRelatedCategories` throw while the draft is pending review. The session cookie is read from Chrome. Playwright is not used.
+`createKnowledgeDraft` and `setRelatedCategories` throw while the draft is pending review. `updateKnowledgeDraft(reqId, articleId, fields)` patches the already-created draft (allowed after `created`); use it to fix content, never a second create. `parseDraftSections(path)` splits the local draft by `## Heading`. The session cookie is read from Chrome. Playwright is not used.
 
 Object map and session principle: [references/objects.md](references/objects.md).
 

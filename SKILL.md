@@ -104,7 +104,11 @@ registerDraft('REQ-######', { draftPath: 'draft-REQ-######.md', sourceUrl, title
 ### Step 5 — Salesforce draft (after approval only)
 
 ```javascript
-const { markApproved, markCreated, mdToHtml, createKnowledgeDraft, setRelatedCategories } = require('./lib');
+const { markApproved, markCreated, mdToHtml, parseDraftSections, createKnowledgeDraft, setRelatedCategories } = require('./lib');
+
+// Read sections with parseDraftSections. Do not hand-roll a regex: `$` with the `m` flag cuts a section after its first line.
+const sec = parseDraftSections('draft-REQ-######.md');
+// then use sec.Description, sec.Resolution, sec['Internal Notes'] as the markdown inputs below
 
 markApproved('REQ-######');
 const created = await createKnowledgeDraft('REQ-######', {
@@ -121,6 +125,8 @@ markCreated('REQ-######', { articleUrl: created.url });
 ```
 
 `createKnowledgeDraft` and `setRelatedCategories` throw if the draft is not approved. The article stays a draft. Do not publish.
+
+**Fixing a created draft:** read the article back (`soql` on `Description__c`, `Resolution__c`, `InternalNotes__c`) and compare with the local draft. If a field differs, call `updateKnowledgeDraft(reqId, articleId, { descriptionHtml, resolutionHtml, internalNotesHtml })`. Never call `createKnowledgeDraft` twice for the same request.
 
 Return:
 

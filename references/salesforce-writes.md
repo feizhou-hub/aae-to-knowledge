@@ -34,6 +34,14 @@ Confirm the read-back: `PublishStatus` is `Draft`, `ArticleNumber` is set, and `
 
 Do not call the Publish quick action.
 
+### Verify and fix after create
+
+Read back `Description__c`, `Resolution__c`, and `InternalNotes__c` and check that each ends with the last sentence of the local section. Build the inputs with `parseDraftSections()`, not a line-based regex. To correct a field on the created draft:
+
+```javascript
+await updateKnowledgeDraft('REQ-######', created.Id, { descriptionHtml, resolutionHtml, internalNotesHtml });
+```
+
 ## Related Categories — Apex
 
 `Related_Category__c` rejects a REST insert. `setRelatedCategories` finds an existing row with the same Product Line, Product Area, and Product Capability, copies that row's catalog ids, and calls:
