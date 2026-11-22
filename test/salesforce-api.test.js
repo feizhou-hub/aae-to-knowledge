@@ -11,6 +11,7 @@ const {
   parseEricSetCookie,
   parseAuraFramework,
   parseAuraBody,
+  extractRichTextImageUrls,
   buildArticleRecord,
   buildCategoryRecord,
   articleUrl,
@@ -42,6 +43,21 @@ const framework = parseAuraFramework(
 );
 assert.equal(framework.fwuid, 'FW123');
 assert.equal(framework.loaded, 'LOAD1');
+
+const laterFramework = parseAuraFramework(
+  '<script src="/l/%7B%22mode%22%3A%22PROD%22%2C%22loaded%22%3A%7B%22APPLICATION%40markup%3A%2F%2Fone%3Aone%22%3A%22OLD%22%7D%7D/a.js"></script>' +
+    '<script src="/l/%7B%22mode%22%3A%22PROD%22%2C%22fwuid%22%3A%22FW999%22%2C%22loaded%22%3A%7B%22APPLICATION%40markup%3A%2F%2Fone%3Aone%22%3A%22LOAD9%22%7D%7D/b.js">'
+);
+assert.equal(laterFramework.fwuid, 'FW999');
+assert.equal(laterFramework.loaded, 'LOAD9');
+
+const imageUrls = extractRichTextImageUrls(
+  '<p>See <img src="https://workday.file.force.com/servlet/rtaImage?eid=a4L&amp;feoid=00N&amp;refid=0EM" alt="setting"></p>' +
+    '<img src="https://example.com/logo.png">'
+);
+assert.deepEqual(imageUrls, [
+  'https://workday.file.force.com/servlet/rtaImage?eid=a4L&feoid=00N&refid=0EM',
+]);
 
 const aura = parseAuraBody('*/{"actions":[{"state":"SUCCESS"}]}/*ERROR*/');
 assert.equal(aura.actions[0].state, 'SUCCESS');

@@ -37,6 +37,25 @@ Playwright MCP is not part of this workflow. Do not launch a browser, do not cal
 
 Run the helpers from this skill directory (`lib/salesforce-api.js`).
 
+## Pace
+
+Do Steps 1–3 in **one Node process**. The Chrome `sid` is decrypted once per host and reused. Do not start a new process per query.
+
+```javascript
+const { readAppointment, searchKnowledge, fetchNoteImages } = require('./lib');
+
+const row = await readAppointment('REQ-523290');
+const hits = await searchKnowledge({
+  titleLikes: ['Expense REST', 'Get_Expense_Reports'],
+  phrases: ['"Expense REST"'],
+});
+const images = await fetchNoteImages(row.publicNotes);
+```
+
+`readAppointment` is one parent-child query. `searchKnowledge` runs the title query and the phrase searches together. Use the feature name and the literal error. Do not search a generic word by itself (`SMS`, `OTP`, `Pre-Hire`). One search is enough.
+
+`fetchNoteImages` downloads only `<img>` URLs already in the public note HTML, and it keeps the `file.force.com` cookies across those images. Do not query `Attachment` or `ContentDocumentLink`.
+
 ### Step 1 — Read the request
 
 ```javascript
@@ -51,7 +70,7 @@ If `readAppointment` says there is no `sid`, ask the user to log into Salesforce
 
 ### Step 2 — Screenshots
 
-Public note HTML may contain `file.force.com` image URLs. Fetch one only when the words do not already state the resolution. Do not open an Attachments tab.
+Call `fetchNoteImages(publicNotes)`. Keep an image when it shows the error or the setting the article describes. Skip an image that shows a personal address, phone number, or email. Do not list appointment attachments.
 
 ### Step 3 — Duplicate check
 

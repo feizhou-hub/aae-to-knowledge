@@ -62,7 +62,7 @@ Set Product Line, Product Area, and Product Capability from the appointment. `Pr
 
 ## Private notes and attachments
 
-`readAppointment` returns public `Appointment_Comment__c` rows only, plus `privateNoteCount`. Do not read private bodies into the article. Attachments are out of scope unless the user asks and the public note HTML is not enough.
+`readAppointment` returns public `Appointment_Comment__c` rows only, plus `privateNoteCount`. Do not read private bodies into the article. Inline screenshots come from `fetchNoteImages(publicNotes)` in that same process. Do not query `Attachment` or `ContentDocumentLink`.
 
 ## Duplicate check
 

@@ -80,6 +80,41 @@ Start a new chat after install. The folder has to contain `SKILL.md`, `lib/`, an
 
 Chrome cookie decryption uses the macOS Keychain item `Chrome Safe Storage`. The first run may ask you to allow that read.
 
+## Update
+
+The local skill is the whole checkout at `~/.claude/skills/aae-to-knowledge`. Pull `main` into that folder. Do not replace `SKILL.md` alone. Start a new chat after the files change so the agent reads the new skill.
+
+This machine also keeps a workspace copy of the helper at `~/Handson/ka-creator-tools/salesforce-api.js`. After the skill pull, copy `lib/salesforce-api.js` onto that file when the workspace is present.
+
+**Cursor — ask the agent**
+
+```
+Update the local aae-to-knowledge skill to the latest GitHub version.
+
+Repository: https://github.com/feizhou-hub/aae-to-knowledge
+Local folder: ~/.claude/skills/aae-to-knowledge
+
+If that folder is a git clone, run git pull.
+If it is not a git clone, download the whole repository again and replace the folder.
+Do not change files outside that folder, except the helper copy below.
+
+When ~/Handson/ka-creator-tools exists, copy lib/salesforce-api.js from the skill onto salesforce-api.js in that project so the workspace helper matches the skill.
+
+Then report the new commit and confirm SKILL.md, lib/, and references/ are present.
+```
+
+**Claude Code — ask the agent**
+
+Switch to Accept edits (`Shift+Tab` until the status bar shows `accept edits on`), then paste the same prompt.
+
+**git**
+
+```bash
+git -C ~/.claude/skills/aae-to-knowledge pull
+cp ~/.claude/skills/aae-to-knowledge/lib/salesforce-api.js \
+  ~/Handson/ka-creator-tools/salesforce-api.js
+```
+
 ## Layout
 
 ```

@@ -27,7 +27,9 @@ Skip boilerplate check-ins and out-of-office replies when they add no technical 
 
 ## Images
 
-An `<img>` in note HTML is optional. Use it when the public text does not already contain the error or the successful response. The image URL is on `file.force.com`.
+Inline `<img>` URLs in public note HTML are on `file.force.com`. Load them with `fetchNoteImages(publicNotes)` in the same Node process as `readAppointment`. That helper downloads only those URLs and reuses the image-host cookies.
+
+Keep an image when the article needs the error dialog or the setting it shows. Skip an image that shows a personal address, phone number, or email. Do not query `Attachment` or `ContentDocumentLink`, and do not download every file on the appointment.
 
 ## What to leave out of the article
 
