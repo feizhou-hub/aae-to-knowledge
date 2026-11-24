@@ -42,11 +42,33 @@ Several appointments can be drafted in one turn. Salesforce creates still wait f
 
 You need Node.js and a Chrome profile that is logged into Workday Salesforce. You do not install Playwright.
 
-One folder serves both apps: `~/.claude/skills/aae-to-knowledge`. Claude Code reads it natively, and Cursor also loads skills from `~/.claude/skills` for compatibility. You do not need a second copy under `~/.cursor/skills`. Two copies would only drift apart.
+Each app has its own skills folder. Follow the section for the app you use. If you use both, install into both folders.
 
-Pick one:
+| App | Skill folder |
+| --- | --- |
+| Cursor | `~/.cursor/skills/aae-to-knowledge` |
+| Claude Code | `~/.claude/skills/aae-to-knowledge` |
 
-**Cursor — ask the agent**
+### Cursor
+
+Ask the agent:
+
+```
+Install the aae-to-knowledge skill from https://github.com/feizhou-hub/aae-to-knowledge
+
+Download the whole repository (not just SKILL.md) into:
+~/.cursor/skills/aae-to-knowledge
+```
+
+Or in a terminal:
+
+```bash
+git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.cursor/skills/aae-to-knowledge
+```
+
+### Claude Code
+
+Switch to Accept edits (`Shift+Tab` until the status bar shows `accept edits on`), then ask the agent:
 
 ```
 Install the aae-to-knowledge skill from https://github.com/feizhou-hub/aae-to-knowledge
@@ -55,28 +77,19 @@ Download the whole repository (not just SKILL.md) into:
 ~/.claude/skills/aae-to-knowledge
 ```
 
-**Claude Code — ask the agent**
+Or in a terminal:
 
-Switch to Accept edits (`Shift+Tab` until the status bar shows `accept edits on`), then paste:
-
-```
-Install the aae-to-knowledge skill from https://github.com/feizhou-hub/aae-to-knowledge
-
-Download the whole repository (not just SKILL.md) into:
-~/.claude/skills/aae-to-knowledge
+```bash
+git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.claude/skills/aae-to-knowledge
 ```
 
-**Both apps, one command**
+### Either app, one command
 
 ```bash
 npx skills add https://github.com/feizhou-hub/aae-to-knowledge -g --agent cursor claude-code
 ```
 
-**git**
-
-```bash
-git clone https://github.com/feizhou-hub/aae-to-knowledge.git ~/.claude/skills/aae-to-knowledge
-```
+Use `--agent cursor` or `--agent claude-code` to install for one app only.
 
 Start a new chat after install. The folder has to contain `SKILL.md`, `lib/`, and `references/`, not `SKILL.md` alone.
 
@@ -84,11 +97,38 @@ Chrome cookie decryption uses the macOS Keychain item `Chrome Safe Storage`. The
 
 ## Update
 
-The local skill is the whole checkout at `~/.claude/skills/aae-to-knowledge`. Cursor and Claude Code both read this one folder, so a single update covers both. Pull `main` into that folder. Do not replace `SKILL.md` alone. Start a new chat after the files change so the agent reads the new skill.
+Update the folder for the app you use. The skill is the whole checkout, so pull `main` into it. Do not replace `SKILL.md` alone. Start a new chat after the files change so the agent reads the new skill.
 
-This machine also keeps a workspace copy of the helper at `~/Handson/ka-creator-tools/salesforce-api.js`. After the skill pull, copy `lib/salesforce-api.js` onto that file when the workspace is present.
+If you keep a workspace copy of the helper (for example `~/Handson/ka-creator-tools/salesforce-api.js`), copy `lib/salesforce-api.js` onto it after the pull.
 
-**Cursor — ask the agent**
+### Cursor
+
+Ask the agent:
+
+```
+Update the local aae-to-knowledge skill to the latest GitHub version.
+
+Repository: https://github.com/feizhou-hub/aae-to-knowledge
+Local folder: ~/.cursor/skills/aae-to-knowledge
+
+If that folder is a git clone, run git pull.
+If it is not a git clone, download the whole repository again and replace the folder.
+Do not change files outside that folder, except the helper copy below.
+
+When ~/Handson/ka-creator-tools exists, copy lib/salesforce-api.js from the skill onto salesforce-api.js in that project so the workspace helper matches the skill.
+
+Then report the new commit and confirm SKILL.md, lib/, and references/ are present.
+```
+
+Or in a terminal:
+
+```bash
+git -C ~/.cursor/skills/aae-to-knowledge pull
+```
+
+### Claude Code
+
+Switch to Accept edits (`Shift+Tab` until the status bar shows `accept edits on`), then ask the agent:
 
 ```
 Update the local aae-to-knowledge skill to the latest GitHub version.
@@ -105,16 +145,10 @@ When ~/Handson/ka-creator-tools exists, copy lib/salesforce-api.js from the skil
 Then report the new commit and confirm SKILL.md, lib/, and references/ are present.
 ```
 
-**Claude Code — ask the agent**
-
-Switch to Accept edits (`Shift+Tab` until the status bar shows `accept edits on`), then paste the same prompt.
-
-**git**
+Or in a terminal:
 
 ```bash
 git -C ~/.claude/skills/aae-to-knowledge pull
-cp ~/.claude/skills/aae-to-knowledge/lib/salesforce-api.js \
-  ~/Handson/ka-creator-tools/salesforce-api.js
 ```
 
 ## Layout
