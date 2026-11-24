@@ -104,11 +104,7 @@ Update the folder for the app you use. The skill is the whole checkout, so pull 
 Ask the agent:
 
 ```
-Update the aae-to-knowledge skill in ~/.cursor/skills/aae-to-knowledge to the latest version from https://github.com/feizhou-hub/aae-to-knowledge
-
-If the folder is a git clone, run git pull. Otherwise download the whole repository and replace the folder. Don't touch files outside it.
-
-Then confirm SKILL.md, lib/, and references/ are present.
+Update the aae-to-knowledge skill in ~/.cursor/skills/aae-to-knowledge to the latest version from https://github.com/feizhou-hub/aae-to-knowledge (whole repository, not just SKILL.md).
 ```
 
 Or in a terminal:
@@ -122,11 +118,7 @@ git -C ~/.cursor/skills/aae-to-knowledge pull
 Switch to Accept edits (`Shift+Tab` until the status bar shows `accept edits on`), then ask the agent:
 
 ```
-Update the aae-to-knowledge skill in ~/.claude/skills/aae-to-knowledge to the latest version from https://github.com/feizhou-hub/aae-to-knowledge
-
-If the folder is a git clone, run git pull. Otherwise download the whole repository and replace the folder. Don't touch files outside it.
-
-Then confirm SKILL.md, lib/, and references/ are present.
+Update the aae-to-knowledge skill in ~/.claude/skills/aae-to-knowledge to the latest version from https://github.com/feizhou-hub/aae-to-knowledge (whole repository, not just SKILL.md).
 ```
 
 Or in a terminal:
