@@ -42,6 +42,8 @@ Several appointments can be drafted in one turn. Salesforce creates still wait f
 
 You need Node.js and a Chrome profile that is logged into Workday Salesforce. You do not install Playwright.
 
+One folder serves both apps: `~/.claude/skills/aae-to-knowledge`. Claude Code reads it natively, and Cursor also loads skills from `~/.claude/skills` for compatibility. You do not need a second copy under `~/.cursor/skills`. Two copies would only drift apart.
+
 Pick one:
 
 **Cursor — ask the agent**
@@ -82,7 +84,7 @@ Chrome cookie decryption uses the macOS Keychain item `Chrome Safe Storage`. The
 
 ## Update
 
-The local skill is the whole checkout at `~/.claude/skills/aae-to-knowledge`. Pull `main` into that folder. Do not replace `SKILL.md` alone. Start a new chat after the files change so the agent reads the new skill.
+The local skill is the whole checkout at `~/.claude/skills/aae-to-knowledge`. Cursor and Claude Code both read this one folder, so a single update covers both. Pull `main` into that folder. Do not replace `SKILL.md` alone. Start a new chat after the files change so the agent reads the new skill.
 
 This machine also keeps a workspace copy of the helper at `~/Handson/ka-creator-tools/salesforce-api.js`. After the skill pull, copy `lib/salesforce-api.js` onto that file when the workspace is present.
 
