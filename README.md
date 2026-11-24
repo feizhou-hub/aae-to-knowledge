@@ -99,25 +99,16 @@ Chrome cookie decryption uses the macOS Keychain item `Chrome Safe Storage`. The
 
 Update the folder for the app you use. The skill is the whole checkout, so pull `main` into it. Do not replace `SKILL.md` alone. Start a new chat after the files change so the agent reads the new skill.
 
-If you keep a workspace copy of the helper (for example `~/Handson/ka-creator-tools/salesforce-api.js`), copy `lib/salesforce-api.js` onto it after the pull.
-
 ### Cursor
 
 Ask the agent:
 
 ```
-Update the local aae-to-knowledge skill to the latest GitHub version.
+Update the aae-to-knowledge skill in ~/.cursor/skills/aae-to-knowledge to the latest version from https://github.com/feizhou-hub/aae-to-knowledge
 
-Repository: https://github.com/feizhou-hub/aae-to-knowledge
-Local folder: ~/.cursor/skills/aae-to-knowledge
+If the folder is a git clone, run git pull. Otherwise download the whole repository and replace the folder. Don't touch files outside it.
 
-If that folder is a git clone, run git pull.
-If it is not a git clone, download the whole repository again and replace the folder.
-Do not change files outside that folder, except the helper copy below.
-
-When ~/Handson/ka-creator-tools exists, copy lib/salesforce-api.js from the skill onto salesforce-api.js in that project so the workspace helper matches the skill.
-
-Then report the new commit and confirm SKILL.md, lib/, and references/ are present.
+Then confirm SKILL.md, lib/, and references/ are present.
 ```
 
 Or in a terminal:
@@ -131,18 +122,11 @@ git -C ~/.cursor/skills/aae-to-knowledge pull
 Switch to Accept edits (`Shift+Tab` until the status bar shows `accept edits on`), then ask the agent:
 
 ```
-Update the local aae-to-knowledge skill to the latest GitHub version.
+Update the aae-to-knowledge skill in ~/.claude/skills/aae-to-knowledge to the latest version from https://github.com/feizhou-hub/aae-to-knowledge
 
-Repository: https://github.com/feizhou-hub/aae-to-knowledge
-Local folder: ~/.claude/skills/aae-to-knowledge
+If the folder is a git clone, run git pull. Otherwise download the whole repository and replace the folder. Don't touch files outside it.
 
-If that folder is a git clone, run git pull.
-If it is not a git clone, download the whole repository again and replace the folder.
-Do not change files outside that folder, except the helper copy below.
-
-When ~/Handson/ka-creator-tools exists, copy lib/salesforce-api.js from the skill onto salesforce-api.js in that project so the workspace helper matches the skill.
-
-Then report the new commit and confirm SKILL.md, lib/, and references/ are present.
+Then confirm SKILL.md, lib/, and references/ are present.
 ```
 
 Or in a terminal:
