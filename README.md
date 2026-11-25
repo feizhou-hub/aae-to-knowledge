@@ -28,15 +28,83 @@ Full object map: [references/objects.md](references/objects.md).
 | Create article | `Knowledge__kav` | REST `POST`. Description, Resolution, and Internal Notes are rich-text fields. The new row is a Draft. |
 | Related Categories | `Related_Category__c` | Product Line, Product Area, and Product Capability for that version. Saved by `CaseFeedArticleController.upsertAndDeleteProductTaggings`. |
 
-## Workflow
+## How to use the agent
 
-Two turns. The first turn only writes a local markdown file. The second turn writes to Salesforce after you approve.
+After you [install](#install) the skill, open a new chat in Cursor or Claude Code. You do not run scripts yourself. The agent follows [SKILL.md](SKILL.md) and reads Salesforce from the Chrome session that is already logged in.
 
-**Turn 1.** Paste an appointment URL or `Create a KA for REQ-######`. The agent reads the appointment, checks Knowledge, saves `draft-REQ-######.md`, and stops.
+Creating an article is two turns. The first turn only writes a local markdown file. The second turn writes to Salesforce after you approve.
 
-**Turn 2.** Reply `approved`, `looks good`, `create it in Salesforce`, or `go ahead`. The agent creates the Salesforce **draft** (not published) and returns the URL.
+### Create a local draft
 
-Several appointments can be drafted in one turn. Salesforce creates still wait for that approval.
+Paste one of these into the chat.
+
+**Appointment URL** (from the browser address bar):
+
+```
+Create a KA based on https://workday.lightning.force.com/lightning/r/Appointment__c/a0XVT00000AbCdE/view
+```
+
+**Request number:**
+
+```
+Create a knowledge article for REQ-462722
+```
+
+```
+Draft a KA from this AAE request: REQ-442467
+```
+
+`make a KA`, `summarize this request as a knowledge article`, or the Salesforce link on its own also work.
+
+The agent reads the appointment and its public notes, checks Knowledge for an existing article, saves `draft-REQ-######.md`, and stops so you can review. It does not write to Salesforce on this turn ([review gate](AGENTS.md)).
+
+### Review and approve
+
+Read the draft. Ask for edits if something is wrong. When it looks right, reply with one of:
+
+```
+approved
+```
+
+```
+looks good
+```
+
+```
+create it in Salesforce
+```
+
+```
+go ahead
+```
+
+The agent creates the Salesforce **draft** (not published) and returns the URL.
+
+### Several requests
+
+Name every appointment in one message. The agent writes one local draft for each, shows them together, and stops. Approval can cover one draft or the whole set. Salesforce creates still wait for that approval.
+
+```
+Create KAs for REQ-238778, REQ-241220, and REQ-293057
+```
+
+```
+Draft knowledge articles from these appointments:
+https://workday.lightning.force.com/lightning/r/Appointment__c/a0XVT00000AbCdE/view
+https://workday.lightning.force.com/lightning/r/Appointment__c/a0XVT00000FgHiJ/view
+```
+
+| Turn | You | Agent |
+|------|-----|-------|
+| 1 | Paste the REQ ids or appointment URLs | Reads each appointment, saves each `draft-REQ-######.md`, and shows the drafts |
+| 2 | Reply **approved**, or name which ones to skip | Creates those Salesforce drafts and returns the URLs |
+
+### Tips
+
+- Open a project folder as the workspace so `draft-REQ-######.md` and the review-gate state are saved locally. The skill folder works.
+- Stay logged into Workday Salesforce in Chrome. When Okta expires, log in again in Chrome and retry. The first run may ask macOS Keychain to read **Chrome Safe Storage**.
+- If an existing article already answers the question, the agent reports it and does not draft a duplicate.
+- The article is written for any customer. Tenant names and case IDs stay out of the body.
 
 ## Install
 
